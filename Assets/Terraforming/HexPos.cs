@@ -28,6 +28,11 @@ public struct HexPos {
     public static HexPos operator *(HexPos a, int n) => new HexPos(a.x * n, a.y * n);
     public static HexPos operator *(int n, HexPos a) => new HexPos(a.x * n, a.y * n);
 
+    public static bool operator ==(HexPos a, HexPos b) => a.x == b.x && a.y == b.y;
+    public static bool operator !=(HexPos a, HexPos b) => a.x != b.x || a.y != b.y;
+    public override bool Equals(object obj) => obj is HexPos a && this == a;
+    public override int GetHashCode() => x.GetHashCode() + (y * SQRT3).GetHashCode();
+
     public HexPos rotate(float angle) {
         int rotations = Mathf.RoundToInt(angle / 60);
         while (rotations < 0) rotations += 600;

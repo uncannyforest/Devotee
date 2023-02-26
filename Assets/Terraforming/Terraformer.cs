@@ -2,12 +2,18 @@ using UnityEngine;
 
 public class Terraformer : MonoBehaviour {
     new public Transform camera;
+    public Material selectorMaterial;
+    public Color selectorReady;
+    public Color selectorInvalid;
 
     private HexPos pos = new HexPos();
     private Terrain terrain;
+    private int selectorMaterialColorProperty;
 
     void Start() {
         terrain = GameObject.FindObjectOfType<Terrain>();
+        Position = new HexPos(2, 0);
+        selectorMaterialColorProperty = Shader.PropertyToID("_EmissionColor");
     }
 
     private HexPos Position {
@@ -20,6 +26,10 @@ public class Terraformer : MonoBehaviour {
             } else {
                 transform.localPosition = pos;
             }
+            if (terrain.CanModTerrain(value))
+                selectorMaterial.SetColor(selectorMaterialColorProperty, selectorReady);
+            else
+                selectorMaterial.SetColor(selectorMaterialColorProperty, selectorInvalid);
         }
     }
 

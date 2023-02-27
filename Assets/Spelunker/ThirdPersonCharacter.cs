@@ -21,6 +21,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		[SerializeField] float m_AnimSpeedMultiplier = 1f;
 		[SerializeField] float m_GroundCheckDistance = 0.125f; // This distance and radius make 
 		[SerializeField] float m_GroundCheckRadius = 0.05f;    // slopes walkable up to approx. 45 deg
+		[SerializeField] float m_JumpMinNotGroundedTime = 0.1f;
 
 		[NonSerialized] public bool isStuck = false;
 		[NonSerialized] public Vector3 groundNormal;
@@ -29,6 +30,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Rigidbody m_Rigidbody;
 		Animator m_Animator;
 		bool m_IsGrounded;
+		float m_NextGroundCheckAfterJump = 0;
 		float m_ActualGroundCheckDistance;
 		const float k_Half = 0.5f;
 		float m_TurnAmount;
@@ -55,7 +57,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			// direction.
 			if (move.magnitude > 1f) move.Normalize();
 			move = transform.InverseTransformDirection(move);
-			CheckGroundStatus();
+			if (Time.time > m_NextGroundCheckAfterJump) CheckGroundStatus();
 			move = Vector3.ProjectOnPlane(move, groundNormal);
 			m_TurnAmount = Mathf.Atan2(move.x, move.z);
 			m_ForwardAmount = move.z;
@@ -140,9 +142,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 				Debug.Log("Original velocity:" + oldVelocity.magnitude);
 				Debug.Log("Forward push:" + jumpPush.magnitude);
 				Debug.Log("New velocity:" + newVelocity.magnitude);
+				Debug.DrawLine(transform.position, transform.position + newVelocity, Color.red, 2);
 				
 				m_Rigidbody.velocity = new Vector3(newVelocity.x, m_JumpPower, newVelocity.z);
+				Debug.Log("Was grounded? " + m_IsGrounded + " Jumping - not grounded now!");
 				m_IsGrounded = false;
+				m_NextGroundCheckAfterJump = Time.time + m_JumpMinNotGroundedTime;
 				m_Animator.applyRootMotion = false;
 				m_ActualGroundCheckDistance = 0.1f;
 			}
@@ -196,11 +201,14 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			if (sphereCast)
 			{
 				groundNormal = hitInfo.normal;
+				Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal * .5f, Color.magenta, 1);
+				if (!m_IsGrounded) Debug.Log("Grounded now!");
 				m_IsGrounded = true;
 				m_Animator.applyRootMotion = true;
 			}
 			else
 			{
+				if (m_IsGrounded) Debug.Log("Lost ground!");
 				m_IsGrounded = false;
 				groundNormal = sphereCast ? hitInfo.normal : Vector3.up;
 				m_Animator.applyRootMotion = false;

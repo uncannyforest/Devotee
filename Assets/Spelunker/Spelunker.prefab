@@ -47,13 +47,14 @@ MonoBehaviour:
   m_MovingTurnSpeed: 360
   m_StationaryTurnSpeed: 180
   m_JumpPower: 6
-  m_ForwardJumpPower: 1.5
+  m_ForwardJumpPower: 3
   m_GravityMultiplier: 1.5
   m_RunCycleLegOffset: 1
   m_MoveSpeedMultiplier: 1.1
   m_AnimSpeedMultiplier: 1.3
   m_GroundCheckDistance: 0.125
   m_GroundCheckRadius: 0.225
+  m_JumpMinNotGroundedTime: 0.1
 --- !u!114 &4745502497753277111
 MonoBehaviour:
   m_ObjectHideFlags: 0

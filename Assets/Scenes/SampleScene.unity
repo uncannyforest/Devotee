@@ -222,7 +222,7 @@ MonoBehaviour:
   columnPrefab: {fileID: 1911079130450417468, guid: 38889960799cf4960b02bdd67bde8e37, type: 3}
   randomSurface:
   - {fileID: 4545655038261800226, guid: 71cbd32e8ac964d28a19216640cd1e12, type: 3}
-  - {fileID: 6740925355296310317, guid: 50a7468a2ace54d90bf9cc4aa730fe20, type: 3}
+  - {fileID: 6855362744152220041, guid: 187009410b3084ded9a5b1832f98ac10, type: 3}
   - {fileID: 701439217984747749, guid: 11124301d69f0411b907b616b80a6311, type: 3}
   - {fileID: 1584882021416367354, guid: 5d29d42f000a34c68902cda6027d228b, type: 3}
   - {fileID: 5720071849907294972, guid: 9226218e4f9d5429ebec5e0e8cee7a26, type: 3}
@@ -231,6 +231,7 @@ MonoBehaviour:
   - {fileID: 6138418085855946587, guid: f030450bb1c7c40caa1f140ea8b3a7b8, type: 3}
   - {fileID: 1515595150588361713, guid: f8781b93daaf54ee9ad85132c9ede625, type: 3}
   - {fileID: 753967583775932421, guid: ccf8064b0b21843a9bcef320442f95d1, type: 3}
+  - {fileID: 701290453497960701, guid: 66b7bfdc933bf481393ce8820895e9d2, type: 3}
 --- !u!1001 &289947936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -429,6 +430,14 @@ PrefabInstance:
     - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_JumpPower
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_GroundCheckRadius
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_GroundCheckDistance
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 776438272083579678, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_Layer

@@ -432,6 +432,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_MaxYSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_GroundCheckRadius
       value: 0.2
       objectReference: {fileID: 0}
@@ -540,8 +544,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6857189608229291353, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857189608229291353, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_Interpolate
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857189608229291353, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7326541107315401516, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_Layer

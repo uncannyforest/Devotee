@@ -55,6 +55,7 @@ MonoBehaviour:
   m_GroundCheckDistance: 0.125
   m_GroundCheckRadius: 0.225
   m_JumpMinNotGroundedTime: 0.1
+  m_MaxYSpeed: 15
 --- !u!114 &4745502497753277111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,6 +66,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfc02df21cfa545049160212c55adb0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &158689948574307522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8659314016061392267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61aed13e6337a47f697950efd2e52dab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!183 &2147065826446850716

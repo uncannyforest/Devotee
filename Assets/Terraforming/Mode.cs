@@ -17,13 +17,13 @@ public class Mode : MonoBehaviour {
                 godMode = false;
                 characterCam.SetActive(true);
                 terraformerCam.SetActive(false);
-                character.enabled = true;
+                character.readInput = true;
                 terraformer.enabled = false;
             } else {
                 godMode = true;
                 characterCam.SetActive(false);
                 terraformerCam.SetActive(true);
-                character.enabled = false;
+                character.readInput = false;
                 terraformer.enabled = true;
             }
         }

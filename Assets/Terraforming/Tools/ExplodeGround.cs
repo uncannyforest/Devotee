@@ -5,10 +5,10 @@ public class ExplodeGround : Tool {
         return Random.Range(0, 2) * 2 - 1;
     }
 
-    override public bool Use(HexPos pos) {
-        if (!Terrain.I.CanModTerrain(pos)) return false;
-        if (Terrain.Grid[pos] == null) return false;
-        Transform column = Terrain.Grid[pos];
+    override public bool Use() {
+        if (!Terrain.I.CanModTerrain(Position)) return false;
+        if (Terrain.Grid[Position] == null) return false;
+        Transform column = Terrain.Grid[Position];
         if (column.GetChild(0).position.y <= -Terrain.I.scale) return false;
 
         Vector3 initialPosition = column.GetChild(0).position - Terrain.I.scale * 2 * Vector3.up;

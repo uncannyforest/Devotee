@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public struct HexPos {
@@ -25,6 +26,7 @@ public struct HexPos {
     public static HexPos D => new HexPos(1, 0);
 
     public static HexPos operator +(HexPos a, HexPos b) => new HexPos(a.x + b.x, a.y + b.y);
+    public static HexPos operator -(HexPos a, HexPos b) => new HexPos(a.x - b.x, a.y - b.y);
     public static HexPos operator *(HexPos a, int n) => new HexPos(a.x * n, a.y * n);
     public static HexPos operator *(int n, HexPos a) => new HexPos(a.x * n, a.y * n);
 
@@ -44,6 +46,16 @@ public struct HexPos {
             case 5: return new HexPos(x + y, -x);
             default: return this;
         }
+    }
+
+    public int ToUnitRotation() {
+        if (this == D) return 0;
+        else if (this == E) return 60;
+        else if (this == W) return 120;
+        else if (this == Q) return 180;
+        else if (this == A) return 240;
+        else if (this == S) return 300;
+        else throw new InvalidOperationException();
     }
 
     override public string ToString() => "(" + x + ", " + y + ")";

@@ -3,32 +3,23 @@ using UnityEngine;
 public class Terraformer : MonoBehaviour {
     public Interaction interaction;
     new public Transform camera;
-    public Material selectorMaterial;
+    public Selector selector;
     public Color selectorReady;
     public Color selectorInvalid;
 
-    private HexPos pos = new HexPos();
-    private int selectorMaterialColorProperty;
-
     void Start() {
         Position = new HexPos(2, 0);
-        selectorMaterialColorProperty = Shader.PropertyToID("_EmissionColor");
     }
 
-    private HexPos Position {
-        get => pos;
-        set {
-            pos = value;
-            if (Terrain.Grid[value]) {
-                Vector3 terrainPosition = Terrain.Grid[value].GetChild(0).position;
-                transform.position = new Vector3(terrainPosition.x, Mathf.Max(0, terrainPosition.y), terrainPosition.z);
-            } else {
-                transform.localPosition = pos;
-            }
+    public HexPos Position {
+        get => selector.Position;
+        private set {
+            interaction.WillUpdatePos(value);
+            selector.Position = value;
             if (Terrain.I.CanModTerrain(value))
-                selectorMaterial.SetColor(selectorMaterialColorProperty, selectorReady);
+                selector.Color = selectorReady;
             else
-                selectorMaterial.SetColor(selectorMaterialColorProperty, selectorInvalid);
+                selector.Color = selectorInvalid;
         }
     }
 
@@ -52,7 +43,7 @@ public class Terraformer : MonoBehaviour {
             Position += HexPos.D.rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("space")) {
-            interaction.Use(Position);
+            interaction.Use();
             Position = Position;
         }
     }

@@ -451,6 +451,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_GroundAdjust
+      value: 0.051
+      objectReference: {fileID: 0}
+    - target: {fileID: 554027870961919626, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_GroundCheckRadius
       value: 0.25
       objectReference: {fileID: 0}
@@ -556,6 +560,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6390423764503067857, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857189608229291353, guid: 5691696a8817c426da4165117d13a0d8, type: 3}
+      propertyPath: m_UseGravity
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6857189608229291353, guid: 5691696a8817c426da4165117d13a0d8, type: 3}

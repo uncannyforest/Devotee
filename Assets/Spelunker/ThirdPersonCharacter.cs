@@ -21,6 +21,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		[SerializeField] float m_AnimSpeedMultiplier = 1f;
 		[SerializeField] float m_GroundCheckDistance = 0.125f; // This distance and radius make 
 		[SerializeField] float m_GroundCheckRadius = 0.05f;    // slopes walkable up to approx. 45 deg
+		[SerializeField] float m_GroundAdjust = 0.1f;
 		[SerializeField] float m_JumpMinNotGroundedTime = 0.1f;
 
 		[NonSerialized] public bool isStuck = false;
@@ -30,6 +31,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Rigidbody m_Rigidbody;
 		Animator m_Animator;
 		bool m_IsGrounded;
+		int m_AirborneFrameCount;
 		float m_NextGroundCheckAfterJump = 0;
 		float m_ActualGroundCheckDistance;
 		const float k_Half = 0.5f;
@@ -58,7 +60,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			if (move.magnitude > 1f) move.Normalize();
 			move = transform.InverseTransformDirection(move);
 			if (Time.time > m_NextGroundCheckAfterJump) CheckGroundStatus();
-			move = Vector3.ProjectOnPlane(move, groundNormal);
+			if (Vector3.Angle(groundNormal, move) > 90)
+				move = Vector3.ProjectOnPlane(move, groundNormal);
 			m_TurnAmount = Mathf.Atan2(move.x, move.z);
 			m_ForwardAmount = move.z;
 
@@ -118,10 +121,10 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		void HandleAirborneMovement()
 		{
 			// apply extra gravity from multiplier:
-			Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplier) - Physics.gravity;
-			m_Rigidbody.AddForce(extraGravityForce);
+			Vector3 gravityForce = Physics.gravity * m_GravityMultiplier;
+			m_Rigidbody.AddForce(gravityForce);
 
-			m_ActualGroundCheckDistance = m_Rigidbody.velocity.y < 0 ? m_GroundCheckDistance : 0.01f;
+			m_ActualGroundCheckDistance = m_Rigidbody.velocity.y <= 0 ? m_GroundCheckDistance : 0.01f;
 		}
 
 
@@ -176,16 +179,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		}
 
 		void OnDrawGizmos() {
-			Gizmos.DrawSphere(transform.position + (Vector3.up * (0.1f - m_ActualGroundCheckDistance)), m_GroundCheckRadius);
+			//Gizmos.DrawSphere(transform.position + (Vector3.up * (0.1f - m_ActualGroundCheckDistance)), m_GroundCheckRadius);
 		}
  
 		void CheckGroundStatus()
 		{
 			RaycastHit hitInfo;
-#if UNITY_EDITOR
-			// helper to visualise the ground check ray in the scene view
-			Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * m_ActualGroundCheckDistance));
-#endif
 			// 0.1f is a small offset to start the ray from inside the character
 			// it is also good to note that the transform position in the sample assets is at the base of the character
 			bool sphereCast = Physics.SphereCast(
@@ -201,17 +200,29 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			if (sphereCast)
 			{
 				groundNormal = hitInfo.normal;
-				Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal * .5f, Color.magenta, 1);
-				if (!m_IsGrounded) Debug.Log("Grounded now!");
+				Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal * .5f, Color.blue, .5f);
+				Debug.DrawLine(transform.position + (Vector3.up * 0.1f), hitInfo.point, Color.magenta, .5f);
+				if (!m_IsGrounded) {
+					Debug.Log("Grounded now!  After frames " + m_AirborneFrameCount);
+					m_AirborneFrameCount = 0;
+				}
 				m_IsGrounded = true;
 				m_Animator.applyRootMotion = true;
+				Debug.Log(m_GroundAdjust + " hit at " + hitInfo.distance + (hitInfo.distance > m_GroundAdjust ? " ADJUST!" : null));
+				if (hitInfo.distance > m_GroundAdjust) {
+					float groundAdjust = (hitInfo.distance - m_ActualGroundCheckDistance - m_GroundCheckRadius);
+					m_Rigidbody.AddForce(Physics.gravity * m_GravityMultiplier);
+				}
 			}
 			else
 			{
-				if (m_IsGrounded) Debug.Log("Lost ground!");
+				if (m_IsGrounded) {
+					Debug.Log("Lost ground!");
+				}
 				m_IsGrounded = false;
 				groundNormal = sphereCast ? hitInfo.normal : Vector3.up;
 				m_Animator.applyRootMotion = false;
+				m_AirborneFrameCount++;
 			}
 		}
 

@@ -208,7 +208,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 				}
 				m_IsGrounded = true;
 				m_Animator.applyRootMotion = true;
-				Debug.Log(m_GroundAdjust + " hit at " + hitInfo.distance + (hitInfo.distance > m_GroundAdjust ? " ADJUST!" : null));
+				// Debug.Log(m_GroundAdjust + " hit at " + hitInfo.distance + (hitInfo.distance > m_GroundAdjust ? " ADJUST!" : null));
 				if (hitInfo.distance > m_GroundAdjust) {
 					float groundAdjust = (hitInfo.distance - m_ActualGroundCheckDistance - m_GroundCheckRadius);
 					m_Rigidbody.AddForce(Physics.gravity * m_GravityMultiplier);

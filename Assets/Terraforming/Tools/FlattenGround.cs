@@ -81,8 +81,8 @@ public class FlattenGround : Tool {
         bool maybeFlip = Random.value > .5f;
         Debug.Log("Heights: " + height1 + ", " + height2);
         if (Mathf.Abs(diff) > Terrain.I.scale) return false;
-        else if (diff > 0) {
-            if (height2 - diff / 4f < height4 && height5 < height1 + diff / 4f)
+        else if (diff > 1) {
+            if (height2 - diff / 4f < height3 && height6 < height1 + diff / 4f)
                 SetNewGround(cliffLand,
                     height1 - Mathf.FloorToInt(diff / 2f),
                     (selector1.Position - selector2.Position).ToUnitRotation(),
@@ -106,8 +106,8 @@ public class FlattenGround : Tool {
                     (selector2.Position - selector1.Position).ToUnitRotation(),
                     diff,
                     false);
-        } else if (diff < 0) {
-            if (height1 - diff / 4f < height5 && height4 < height2 + diff / 4f)
+        } else if (diff < -1) {
+            if (height1 - diff / 4f < height6 && height3 < height2 + diff / 4f)
                 SetNewGround(cliffLand,
                     height2 - Mathf.FloorToInt(-diff / 2f),
                     (selector2.Position - selector1.Position).ToUnitRotation(),
@@ -132,63 +132,64 @@ public class FlattenGround : Tool {
                     -diff,
                     true);
         } else {
-            if (height4 < height1 && height5 > height1) {
-                int halfDiff = Mathf.Min(height1 - height4, height5 - height1, Terrain.I.scale / 2);
+            int height0 = Mathf.Min(height1, height2);
+            if (height3 < height0 && height6 > height0) {
+                int halfDiff = Mathf.Min((height0 - height3)*2, (height6 - height0)*2, Terrain.I.scale / 2);
                 SetNewGround(cliffEndLand,
-                    height1 - halfDiff,
+                    height0 - halfDiff * 2,
                     (selector1.Position - selector2.Position).ToUnitRotation(),
                     halfDiff * 2,
                     false);
-            } else if (height5 < height1 && height1 < height4) {
-                int halfDiff = Mathf.Min(height1 - height4, height5 - height1, Terrain.I.scale / 2);
+            } else if (height6 < height0 && height0 < height3) {
+                int halfDiff = Mathf.Min((height0 - height6)*2, (height3 - height0)*2, Terrain.I.scale / 2);
                 SetNewGround(cliffEndLand,
-                    height1 - halfDiff,
+                    height0 - halfDiff * 2,
                     (selector2.Position - selector1.Position).ToUnitRotation(),
                     halfDiff * 2,
                     true);
-            } else if (height4 < height1 && height5 < height1) {
-                diff = Mathf.Min(height1 - height4, height1 - height5, Terrain.I.scale);
-                if (height3 <= height1 - diff && height6 >= height1)
+            } else if (height4 < height0 && height5 < height0) {
+                diff = Mathf.Min(height0 - height4, height0 - height5, Terrain.I.scale);
+                if (height3 <= height0 - diff && height6 >= height0)
                     SetNewGround(cliffLand,
-                        height1 - diff - Mathf.FloorToInt(diff / 2f),
+                        height0 - diff - Mathf.FloorToInt(diff / 2f),
                         (Position - selector1.Position).ToUnitRotation(),
                         diff,
                         maybeFlip);
-                else if (height3 >= height1 && height6 <= height1 - diff)
+                else if (height3 >= height0 && height6 <= height0 - diff)
                     SetNewGround(cliffLand,
-                        height1 - diff - Mathf.FloorToInt(diff / 2f),
+                        height0 - diff - Mathf.FloorToInt(diff / 2f),
                         (Position - selector2.Position).ToUnitRotation(),
                         diff,
                         maybeFlip);
                 else
                     SetNewGround(slopeLand,
-                        height1 - diff - Mathf.FloorToInt(diff / 2f),
+                        height0 - diff - Mathf.FloorToInt(diff / 2f),
                         (selector1.Position - selector2.Position).ToUnitRotation() - (maybeFlip ? 180 : 0),
                         diff,
                         maybeFlip);
-            } else if (height4 > height1 && height5 > height1) {
-                diff = Mathf.Min(height4 - height1, height5 - height1, Terrain.I.scale);
-                if (height3 >= height1 + diff && height6 <= height1)
+            } else if (height4 > height0 && height5 > height0) {
+                diff = Mathf.Min(height4 - height0, height5 - height0, Terrain.I.scale);
+                if (height3 >= height0 + diff && height6 <= height0)
                     SetNewGround(cliffLand,
-                        height1 - Mathf.FloorToInt(diff / 2f),
+                        height0 - Mathf.FloorToInt(diff / 2f),
                         (selector1.Position - Position).ToUnitRotation(),
                         diff,
                         maybeFlip);
-                else if (height3 <= height1 && height6 >= height1 + diff)
+                else if (height3 <= height0 && height6 >= height0 + diff)
                     SetNewGround(cliffLand,
-                        height1 - Mathf.FloorToInt(diff / 2f),
+                        height0 - Mathf.FloorToInt(diff / 2f),
                         (selector2.Position - Position).ToUnitRotation(),
                         diff,
                         maybeFlip);
                 else
                     SetNewGround(slopeLand,
-                        height1 - Mathf.FloorToInt(diff / 2f),
+                        height0 - Mathf.FloorToInt(diff / 2f),
                         (selector2.Position - selector1.Position).ToUnitRotation() - (maybeFlip ? 180 : 0),
                         diff,
                         maybeFlip);
             } else {
                 SetNewGround(flatLand,
-                    height1,
+                    height0,
                     60 * Random.Range(0, 6),
                     maybeFlip);
             }

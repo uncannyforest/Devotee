@@ -11,6 +11,7 @@ public class FlattenGround : Tool {
     public GameObject slopeLand;
     public GameObject cliffLand;
     public GameObject cliffEndLand;
+    public GameObject bridgeLand;
 
     private Selector selector1;
     private Selector selector2;
@@ -60,7 +61,7 @@ public class FlattenGround : Tool {
         int height1 = GetHeight(selector1.Position, pos);
         int height2 = GetHeight(selector2.Position, pos);
         Debug.Log("Heights: " + height1 + ", " + height2);
-        if (Mathf.Abs(height1 - height2) > 10) {
+        if (Mathf.Abs(height1 - height2) > 2 * Terrain.I.scale) {
             selector1.Color = selectorInvalid;
             selector2.Color = selectorInvalid;
         } else {
@@ -69,7 +70,9 @@ public class FlattenGround : Tool {
         }
     }
 
-    override public bool Use() {
+    override public bool Use() => Use(3);
+
+    public bool Use(int slopedness) {
         if (!Terrain.I.CanModTerrain(Position)) return false;
         int height1 = GetHeight(selector1.Position, Position);
         int height2 = GetHeight(selector2.Position, Position);
@@ -80,8 +83,20 @@ public class FlattenGround : Tool {
         int diff = height2 - height1;
         bool maybeFlip = Random.value > .5f;
         Debug.Log("Heights: " + height1 + ", " + height2);
-        if (Mathf.Abs(diff) > Terrain.I.scale) return false;
-        else if (diff > 1) {
+        if (Mathf.Abs(diff) > 2 * Terrain.I.scale) return false;
+        else if (diff > Terrain.I.scale) {
+            SetNewGround(bridgeLand,
+                height1,
+                (selector2.Position - selector1.Position).ToUnitRotation(),
+                Mathf.FloorToInt(diff / 2f),
+                true);
+        } else if (diff < -Terrain.I.scale) {
+            SetNewGround(bridgeLand,
+                height2,
+                (selector2.Position - selector1.Position).ToUnitRotation(),
+                Mathf.FloorToInt(diff / -2f),
+                false);
+        } else if (diff > slopedness) {
             if (height2 - diff / 4f < height3 && height6 < height1 + diff / 4f)
                 SetNewGround(cliffLand,
                     height1 - Mathf.FloorToInt(diff / 2f),
@@ -106,7 +121,7 @@ public class FlattenGround : Tool {
                     (selector2.Position - selector1.Position).ToUnitRotation(),
                     diff,
                     false);
-        } else if (diff < -1) {
+        } else if (diff < -slopedness) {
             if (height1 - diff / 4f < height6 && height3 < height2 + diff / 4f)
                 SetNewGround(cliffLand,
                     height2 - Mathf.FloorToInt(-diff / 2f),
@@ -132,7 +147,8 @@ public class FlattenGround : Tool {
                     -diff,
                     true);
         } else {
-            int height0 = Mathf.Min(height1, height2);
+            // round down if diff == 1, up otherwise
+            int height0 = Mathf.Abs(diff) <= 1 ? Mathf.Min(height1, height2) : Mathf.CeilToInt((height1 + height2) / 2f);
             if (height3 < height0 && height6 > height0) {
                 int halfDiff = Mathf.Min((height0 - height3)*2, (height6 - height0)*2, Terrain.I.scale / 2);
                 SetNewGround(cliffEndLand,

@@ -8,7 +8,7 @@ public class EdgeLevels : MonoBehaviour {
 
     // facing along x axis in world space = up (W)
     public float GetLevel(HexPos relative) {
-        HexPos afterRotation = relative.rotate(transform.localRotation.eulerAngles.y);
+        HexPos afterRotation = relative.Rotate(transform.localRotation.eulerAngles.y);
         HexPos check = transform.localScale.z > 0 ? afterRotation : new HexPos(afterRotation.x + afterRotation.y, -afterRotation.y);
         if (check == HexPos.D) return levels[0] * .25f * transform.lossyScale.y + transform.position.y;
         if (check == HexPos.E) return levels[1] * .25f * transform.lossyScale.y + transform.position.y;

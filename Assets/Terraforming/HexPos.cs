@@ -35,7 +35,7 @@ public struct HexPos {
     public override bool Equals(object obj) => obj is HexPos a && this == a;
     public override int GetHashCode() => x.GetHashCode() + (y * SQRT3).GetHashCode();
 
-    public HexPos rotate(float angle) {
+    public HexPos Rotate(float angle) {
         int rotations = Mathf.RoundToInt(angle / 60);
         while (rotations < 0) rotations += 600;
         switch (rotations % 6) {

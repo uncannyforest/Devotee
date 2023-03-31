@@ -25,22 +25,22 @@ public class Terraformer : MonoBehaviour {
 
     void Update() {
         if (Input.GetKeyDown("e")) {
-            Position += HexPos.E.rotate(-camera.eulerAngles.y - 30);
+            Position += HexPos.E.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("w")) {
-            Position += HexPos.W.rotate(-camera.eulerAngles.y - 30);
+            Position += HexPos.W.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("q")) {
-            Position += HexPos.Q.rotate(-camera.eulerAngles.y - 30);
+            Position += HexPos.Q.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("a")) {
-            Position += HexPos.A.rotate(-camera.eulerAngles.y - 30);
+            Position += HexPos.A.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("s")) {
-            Position += HexPos.S.rotate(-camera.eulerAngles.y - 30);
+            Position += HexPos.S.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("d")) {
-            Position += HexPos.D.rotate(-camera.eulerAngles.y - 30);
+            Position += HexPos.D.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("space")) {
             interaction.Use();

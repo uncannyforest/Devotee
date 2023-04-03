@@ -1,15 +1,13 @@
 using UnityEngine;
 
 public class RaiseGround : Tool {
-    private int maxHeight = 0;
-
     public static int RandomSign() {
         return Random.Range(0, 2) * 2 - 1;
     }
 
-    override public bool Use() => Use(Position, ref maxHeight);
+    override public bool Use() => Use(Position);
 
-    public static bool Use(HexPos position, ref int maxHeight) {
+    public static bool Use(HexPos position) {
         if (!Terrain.I.CanModTerrain(position)) return false;
         if (Terrain.Grid[position] == null) {
             int height = Random.Range(1, Terrain.I.scale + 1);
@@ -31,18 +29,18 @@ public class RaiseGround : Tool {
             Mathf.RoundToInt(initialPosition.y);
         } else {
             int yPos = RaiseColumn(position, 1, null);
-            MaybeRaiseOrigin(yPos, ref maxHeight);
+            MaybeRaiseOrigin(yPos);
         }
         return true;
     }
 
-    public static void MaybeRaiseOrigin(int yPos, ref int maxHeight) {
-        if (yPos > maxHeight) {
+    public static void MaybeRaiseOrigin(int yPos) {
+        if (yPos > Terrain.I.maxHeight) {
             for (int i = 0; i < Terrain.I.originPositions.Length; i++) {
                 HexPos origin = Terrain.I.originPositions[i];
-                RaiseColumnDangerous(origin, yPos - maxHeight, i);
+                RaiseColumnDangerous(origin, yPos - Terrain.I.maxHeight, i);
             }
-            maxHeight = yPos;
+            Terrain.I.maxHeight = yPos;
         }
     }
 

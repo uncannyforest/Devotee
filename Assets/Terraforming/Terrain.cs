@@ -22,6 +22,8 @@ public class Terrain : MonoBehaviour {
     public HexGrid<Transform> grid = new HexGrid<Transform>();
     public static HexGrid<Transform> Grid { get => instance.grid; }
 
+    public int maxHeight = 0;
+
     public void Start() {
         grid[new HexPos(0, 0)] = transform.GetChild(0);
         grid[new HexPos(1, 0)] = transform.GetChild(1);

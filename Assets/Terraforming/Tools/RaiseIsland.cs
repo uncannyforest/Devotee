@@ -12,9 +12,6 @@ public class RaiseIsland : Tool {
     public GameObject cliffEndLand;
     public GameObject bridgeLand;
 
-
-    private int maxHeight = 0;
-
     override public void Load() {
         selector.transform.localScale = new Vector3(3, selector.transform.localScale.y, 3);
     }
@@ -33,7 +30,7 @@ public class RaiseIsland : Tool {
     }
 
     override public bool Use() {
-        RaiseGround.Use(Position, ref maxHeight);
+        RaiseGround.Use(Position);
 
         HexPos e = Position;
         HexPos w = Position;
@@ -43,12 +40,12 @@ public class RaiseIsland : Tool {
         HexPos d = Position;
         IncrementCompass(ref e, ref w, ref q, ref a, ref s, ref d);
 
-        if (Terrain.Grid[e] == null) RaiseGround.Use(e, ref maxHeight);
-        if (Terrain.Grid[w] == null) RaiseGround.Use(w, ref maxHeight);
-        if (Terrain.Grid[q] == null) RaiseGround.Use(q, ref maxHeight);
-        if (Terrain.Grid[a] == null) RaiseGround.Use(a, ref maxHeight);
-        if (Terrain.Grid[s] == null) RaiseGround.Use(s, ref maxHeight);
-        if (Terrain.Grid[d] == null) RaiseGround.Use(d, ref maxHeight);
+        if (Terrain.Grid[e] == null) RaiseGround.Use(e);
+        if (Terrain.Grid[w] == null) RaiseGround.Use(w);
+        if (Terrain.Grid[q] == null) RaiseGround.Use(q);
+        if (Terrain.Grid[a] == null) RaiseGround.Use(a);
+        if (Terrain.Grid[s] == null) RaiseGround.Use(s);
+        if (Terrain.Grid[d] == null) RaiseGround.Use(d);
 
         int yPos = 0;
 
@@ -65,7 +62,7 @@ public class RaiseIsland : Tool {
         if (FlattenGround.GetHeightDifference(d, Position) < 0)
             yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(d, FlattenGround.GetHeightDifference(Position, d), null));
 
-        RaiseGround.MaybeRaiseOrigin(yPos, ref maxHeight);
+        RaiseGround.MaybeRaiseOrigin(yPos);
 
         for (int i = 1; i <= islandIterations; i++) {
             bool changed = false;

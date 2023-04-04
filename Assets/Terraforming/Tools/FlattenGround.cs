@@ -87,14 +87,14 @@ public class FlattenGround : Tool {
         int height6 = GetHeight(position1 - position2 + position, position);
         int diff = height2 - height1;
         bool maybeFlip = Random.value > .5f;
-        if (Mathf.Abs(diff) > 2 * Terrain.I.scale) return false;
-        else if (considerBridge && diff > Terrain.I.scale) {
+        if (Mathf.Abs(diff) > (considerBridge ? 2 : 1) * Terrain.I.scale) return false;
+        else if (diff > Terrain.I.scale) {
             SetNewGround(position, bridgeLand,
                 height1,
                 (position2 - position1).ToUnitRotation(),
                 Mathf.FloorToInt(diff / 2f),
                 true);
-        } else if (considerBridge && diff < -Terrain.I.scale) {
+        } else if (diff < -Terrain.I.scale) {
             SetNewGround(position, bridgeLand,
                 height2,
                 (position2 - position1).ToUnitRotation(),

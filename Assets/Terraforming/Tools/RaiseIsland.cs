@@ -97,7 +97,7 @@ public class RaiseIsland : Tool {
         for (int i = 0; i < times; i++) {
             if (FlattenGround.GetHeightDifference(start + comparison1, start) > slopedness
                     || FlattenGround.GetHeightDifference(start + comparison2, start) > slopedness) {
-                changed |= FlattenGround.Use(slopedness, start, start + comparison1, start + comparison2, Random.value < .5f,//1f / Terrain.I.randomSurface.Length,
+                changed |= FlattenGround.Use(slopedness, start, start + comparison1, start + comparison2, Random.value < .1f,//1f / Terrain.I.randomSurface.Length,
                     flatLand, slopeLand, cliffLand, cliffEndLand, bridgeLand);
                 if (i == 0) corner0 = true;
                 if (i == times - 1) corner1 = true;
@@ -113,7 +113,7 @@ public class RaiseIsland : Tool {
         int height2 = FlattenGround.GetHeight(position + comparison.Rotate(60), position);
         // reference the larger one
         if (height2 < height1 - slopedness) {
-            FlattenGround.Use(slopedness, position, position + comparison.Rotate(-60), position + comparison, Random.value < .5f,//1f / Terrain.I.randomSurface.Length,
+            FlattenGround.Use(slopedness, position, position + comparison.Rotate(-60), position + comparison, Random.value < .1f,//1f / Terrain.I.randomSurface.Length,
                     flatLand, slopeLand, cliffLand, cliffEndLand, bridgeLand);
         } else if (height1 < height2 - slopedness) {
             FlattenGround.Use(slopedness, position, position + comparison, position + comparison.Rotate(60), Random.value < .5f,//1f / Terrain.I.randomSurface.Length,

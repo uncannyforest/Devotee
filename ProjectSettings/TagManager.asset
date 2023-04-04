@@ -8,13 +8,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Terraforming
   - Perspective Only
   - Orthographic Only
-  - 
+  - Let Player Through
   - 
   - 
   - 

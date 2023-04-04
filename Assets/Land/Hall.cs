@@ -31,7 +31,6 @@ public class Hall : MonoBehaviour {
                 GameObject.Destroy(outer1);
                 inner1.GetComponent<MeshRenderer>().material = oneWayClosed;
                 inner2.GetComponent<MeshRenderer>().material = oneWayOpen;
-                GameObject.Destroy(inner2.GetComponent<Collider>());
                 break;
         }
     }

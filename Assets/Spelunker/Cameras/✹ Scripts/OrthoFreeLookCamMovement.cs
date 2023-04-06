@@ -13,6 +13,7 @@ public class OrthoFreeLookCamMovement : MonoBehaviour
     // 		Pivot
     // 			Camera
 
+    [SerializeField] private Selector m_Target;
     [Range(0f, 10f)] [SerializeField] private float m_HTurnSpeed = 1.5f;  // How fast the rig will rotate left-right from user input.
     [Range(0f, 1f)] [SerializeField] private float m_VTurnSpeed = .03f;   // How fast the rig will rotate forward-back from user input.
     [SerializeField] private float m_TurnSmoothing = 0.0f;                // How much smoothing to apply to the turn input, to reduce mouse-turn jerkiness
@@ -29,7 +30,7 @@ public class OrthoFreeLookCamMovement : MonoBehaviour
         }
     }
 
-    private bool m_IsResettingDistance = false;
+    private bool m_IsResettingDistance = false; // not used
     private float m_AimingForIso = 0;
     private bool m_XKeyDown = false;
     private MixedAutoCam m_AutoScript;
@@ -55,11 +56,8 @@ public class OrthoFreeLookCamMovement : MonoBehaviour
     protected void Update()
     {
         if (Input.GetButtonDown("Reset Camera")) {
-            if (m_AimingForIso == 0) {
-                m_IsResettingDistance = true;
-            } else {
-                m_AimingForIso = 0;
-            }
+            m_AimingForIso = IsoResetAim(out Transform player);
+            m_Target.Position = HexPos.FromWorldCoord(player.position / Terrain.I.scale);
         }
         HandleRotationMovement();
         if (m_LockCursor && Input.GetMouseButtonUp(0))
@@ -69,6 +67,11 @@ public class OrthoFreeLookCamMovement : MonoBehaviour
         }
     }
 
+    public static float IsoResetAim(out Transform player) {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        float playerAngle = Vector3.SignedAngle(Vector3.right, player.forward, Vector3.down);
+        return AngleClamp(-Mathf.RoundToInt(playerAngle / 60) * 60 + 60);
+    }
 
     private void OnDisable()
     {
@@ -80,7 +83,7 @@ public class OrthoFreeLookCamMovement : MonoBehaviour
         transform.localRotation = Quaternion.Euler(0f, m_AimingForIso, 0f);
     }
 
-    private float AngleClamp(float angle) {
+    private static float AngleClamp(float angle) {
         while (angle < -179) {
             angle += 360;
         }

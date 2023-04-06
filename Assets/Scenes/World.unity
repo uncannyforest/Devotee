@@ -1168,6 +1168,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8549625763485487292, guid: fb5a68e4cbeb0488fbca24519737b1d3, type: 3}
+      propertyPath: m_Target
+      value: 
+      objectReference: {fileID: 743516561}
+    - target: {fileID: 8549625763485487292, guid: fb5a68e4cbeb0488fbca24519737b1d3, type: 3}
       propertyPath: m_MaxCameraSize
       value: 128
       objectReference: {fileID: 0}

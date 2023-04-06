@@ -14,9 +14,27 @@ public struct HexPos {
     public int y;
 
     public static implicit operator Vector2(HexPos pos)
-        => new Vector2((pos.x + pos.y) * 3f / 2, (pos.y - pos.x) * SQRT3 / 2);
+        => new Vector2((pos.x + pos.y) * 1.5f, (pos.y - pos.x) * SQRT3 / 2);
     public static implicit operator Vector3(HexPos pos)
-        => new Vector3((pos.x + pos.y) * 3f / 2, 0, (pos.y - pos.x) * SQRT3 / 2);
+        => new Vector3((pos.x + pos.y) * 1.5f, 0, (pos.y - pos.x) * SQRT3 / 2);
+    public static HexPos FromWorldCoord(Vector3 coord) {
+        float fX = (Quaternion.Euler(0, -120, 0) * coord).z / 1.5f;
+        float fY = coord.z / 1.5f;
+        float fZ = (Quaternion.Euler(0, 120, 0) * coord).z / 1.5f; // z = - x - y https://www.redblobgames.com/grids/hexagons/#rounding
+        Debug.Log(fX + fY + fZ);
+        int x = Mathf.RoundToInt(fX);
+        int y = Mathf.RoundToInt(fY);
+        int z = Mathf.RoundToInt(fZ);
+        if (x + y + z != 0) {
+            if (Mathf.Abs(fX - x) > Mathf.Abs(fY - y) && Mathf.Abs(fX - x) > Mathf.Abs(fZ - z))
+                x = -y - z;
+            else if (Mathf.Abs(fY - y) > Mathf.Abs(fZ - z))
+                y = -x - z;
+            else
+                z = -x - y; // not used, but here for clarity
+        }
+        return new HexPos(x, y);
+    }
 
     public static HexPos E => new HexPos(0, 1);
     public static HexPos W => new HexPos(-1, 1);

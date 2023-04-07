@@ -6,15 +6,14 @@ public class MainMenu : MonoBehaviour {
 
     public static void NewGame() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        // OnTerrainReady(Terrain.GenerateNewWorld);
     }
 
     public static void LoadGame() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        // OnTerrainReady(MapPersistence.LoadGame);
+        OnTerrainReady(MapPersistence.LoadGame);
     }
 
     public static void OnTerrainReady(Action action) {
-        // SceneManager.sceneLoaded += (s, l) => {Terrain.I.Started += action;};
+        SceneManager.sceneLoaded += (s, l) => { action(); };
     }
 }

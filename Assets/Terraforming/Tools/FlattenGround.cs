@@ -38,9 +38,9 @@ public class FlattenGround : Tool {
     }
 
     public static int GetHeight(HexPos position, HexPos adjacentPosition) {
-        Transform column = Terrain.Grid[position];
+        Column column = Terrain.Grid[position];
         if (column == null) return 0;
-        int level = Mathf.FloorToInt(column.GetChild(0)
+        int level = Mathf.FloorToInt(column.Surface
             .GetComponent<EdgeLevels>().GetLevel(adjacentPosition - position));
         return level > 0 ? level : 0;
     }
@@ -223,40 +223,32 @@ public class FlattenGround : Tool {
 
         if (Terrain.Grid[position] == null) {
             int height = elevationScale;
-            Vector3 initialPosition = Quaternion.Euler(0, -30, 0) * (Vector3)(position) * Terrain.I.scale + Vector3.up * elevationBase;
-            Transform column = GameObject.Instantiate(
-                Terrain.I.columnPrefab,
-                initialPosition,
-                Quaternion.identity,
-                Terrain.I.transform
-            ).transform;
-            column.gameObject.name = position.ToString();
-            Transform surface = GameObject.Instantiate(
-                prefab,
-                initialPosition,
-                Quaternion.Euler(0, -rotation, 0),
-                column).transform;
-            surface.localScale = new Vector3(Terrain.I.scale, height, flip ? -Terrain.I.scale : Terrain.I.scale);
-            Terrain.Grid[position] = column;
+            Column column = Column.Instantiate(position, elevationBase);
+            Transform surface = column.InstantiateSurface(
+                prefab.GetComponent<Land>().id,
+                column.transform.position,
+                -rotation,
+                height,
+                flip ? -1 : 1);
             RaiseGround.ExtendColumn(position, 0, null);
         } else {
-            Transform column = Terrain.Grid[position];
-            int oldElevationBase = Mathf.FloorToInt(column.GetChild(0).position.y);
+            Column column = Terrain.Grid[position];
+            int oldElevationBase = Mathf.FloorToInt(column.Surface.position.y);
             int comingRigidbodyMove = elevationBase - oldElevationBase;
             if (comingRigidbodyMove > 0) {
                 RaiseGround.RaiseColumn(position, comingRigidbodyMove, null);
             } else if (comingRigidbodyMove < 0) {
-                column.GetComponent<Rigidbody>().MovePosition(column.position + comingRigidbodyMove * Vector3Int.up);
+                column.GetComponent<Rigidbody>().MovePosition(column.transform.position + comingRigidbodyMove * Vector3Int.up);
             }
 
-            Vector3 originalPosition = column.GetChild(0).position;
-            GameObject.Destroy(column.GetChild(0).gameObject);
-            Transform surface = GameObject.Instantiate(
-                prefab,
-                new Vector3(originalPosition.x, elevationBase - comingRigidbodyMove, originalPosition.z),
-                Quaternion.Euler(0, -rotation, 0),
-                column).transform;
-            surface.localScale = new Vector3(Terrain.I.scale, elevationScale, flip ? -Terrain.I.scale : Terrain.I.scale);
+            Vector3 originalPosition = column.Surface.position;
+            GameObject.Destroy(column.Surface.gameObject);
+            Transform surface = column.InstantiateSurface(
+                prefab.GetComponent<Land>().id,
+                new Vector3(column.transform.position.x, elevationBase - comingRigidbodyMove, column.transform.position.z),
+                -rotation,
+                elevationScale,
+                flip ? -1 : 1);
             surface.SetAsFirstSibling();
         }
 
@@ -268,26 +260,17 @@ public class FlattenGround : Tool {
 
         if (Terrain.Grid[position] == null) {
             int height = Random.Range(1, Terrain.I.scale + 1);
-            Vector3 initialPosition = Quaternion.Euler(0, -30, 0) * (Vector3)(position) * Terrain.I.scale
-                + Vector3.up * (elevation - height);
-            Transform column = GameObject.Instantiate(
-                Terrain.I.columnPrefab,
-                initialPosition,
-                Quaternion.identity,
-                Terrain.I.transform
-            ).transform;
-            column.gameObject.name = position.ToString();
-            Transform surface = GameObject.Instantiate(
-                prefab,
-                initialPosition,
-                Quaternion.Euler(0, -rotation, 0),
-                column).transform;
-            surface.localScale = new Vector3(Terrain.I.scale, height, flip ? -Terrain.I.scale : Terrain.I.scale);
-            Terrain.Grid[position] = column;
+            Column column = Column.Instantiate(position, elevation - height);
+            Transform surface = column.InstantiateSurface(
+                prefab.GetComponent<Land>().id,
+                column.transform.position,
+                -rotation,
+                height,
+                flip ? -1 : 1);
             RaiseGround.ExtendColumn(position, 0, null);
         } else {
-            Transform column = Terrain.Grid[position];
-            int baseElevation = Mathf.FloorToInt(column.GetChild(0).position.y);
+            Column column = Terrain.Grid[position];
+            int baseElevation = Mathf.FloorToInt(column.Surface.position.y);
             int intendedHeight = elevation - baseElevation;
             int height;
             int comingRigidbodyMove = 0;
@@ -302,17 +285,17 @@ public class FlattenGround : Tool {
                 height = Random.Range(1, Terrain.I.scale + 1);
                 comingRigidbodyMove = intendedHeight - height;
                 baseElevation += comingRigidbodyMove;
-                column.GetComponent<Rigidbody>().MovePosition(column.position + comingRigidbodyMove * Vector3Int.up);
+                column.GetComponent<Rigidbody>().MovePosition(column.transform.position + comingRigidbodyMove * Vector3Int.up);
             }
 
-            Vector3 originalPosition = column.GetChild(0).position;
-            GameObject.Destroy(column.GetChild(0).gameObject);
-            Transform surface = GameObject.Instantiate(
-                prefab,
-                new Vector3(originalPosition.x, baseElevation - comingRigidbodyMove, originalPosition.z),
-                Quaternion.Euler(0, 60 * Random.Range(0, 6), 0),
-                column).transform;
-            surface.localScale = new Vector3(Terrain.I.scale, height, flip ? -Terrain.I.scale : Terrain.I.scale);
+            Vector3 originalPosition = column.Surface.position;
+            GameObject.Destroy(column.Surface.gameObject);
+            Transform surface = column.InstantiateSurface(
+                prefab.GetComponent<Land>().id,
+                new Vector3(column.transform.position.x, baseElevation - comingRigidbodyMove, column.transform.position.z),
+                -rotation,
+                height,
+                flip ? -1 : 1);
             surface.SetAsFirstSibling();
         }
     }

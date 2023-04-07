@@ -52,6 +52,20 @@ MonoBehaviour:
   radiusSpaceRequired: 0
   orientation: 2
   collected: 0
+--- !u!114 &-4930712631619955300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6192077346014210054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: add12ff6f59cc4636b79f5710051176d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 6
+  randomSeed: -1
 --- !u!114 &2959088103018611306
 MonoBehaviour:
   m_ObjectHideFlags: 0

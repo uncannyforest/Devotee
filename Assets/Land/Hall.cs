@@ -13,7 +13,7 @@ public class Hall : MonoBehaviour {
     public Material oneWayClosed;
 
     void Start() {
-        int version = Random.Range(0, 4);
+        int version = GetComponent<Land>().RandomRange(4);
         switch (version) {
             case 0: // all entrances open
                 GameObject.Destroy(inner1);

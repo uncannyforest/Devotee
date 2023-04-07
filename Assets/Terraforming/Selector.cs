@@ -10,7 +10,7 @@ public class Selector : MonoBehaviour {
         set {
             pos = value;
             if (Terrain.Grid[value]) {
-                Vector3 terrainPosition = Terrain.Grid[value].GetChild(0).position;
+                Vector3 terrainPosition = Terrain.Grid[value].Surface.position;
                 transform.position = new Vector3(terrainPosition.x, Mathf.Max(0, terrainPosition.y), terrainPosition.z);
             } else {
                 transform.localPosition = pos;

@@ -15,18 +15,18 @@ public class Terrain : MonoBehaviour {
         new HexPos(0, 0),
         new HexPos(1, 0)
     };
-    public GameObject columnPrefab;
+    public Column columnPrefab;
     public GameObject[] randomSurface;
     public GameObject[] randomUnderground;
 
-    public HexGrid<Transform> grid = new HexGrid<Transform>();
-    public static HexGrid<Transform> Grid { get => instance.grid; }
+    public HexGrid<Column> grid = new HexGrid<Column>();
+    public static HexGrid<Column> Grid { get => instance.grid; }
 
     public int maxHeight = 0;
 
     public void Start() {
-        grid[new HexPos(0, 0)] = transform.GetChild(0);
-        grid[new HexPos(1, 0)] = transform.GetChild(1);
+        grid[new HexPos(0, 0)] = transform.GetChild(0).GetComponent<Column>();
+        grid[new HexPos(1, 0)] = transform.GetChild(1).GetComponent<Column>();
     }
 
     public bool CanModTerrain(HexPos pos) {

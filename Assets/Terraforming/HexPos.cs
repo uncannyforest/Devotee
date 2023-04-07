@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[Serializable]
 public struct HexPos {
     public static float SQRT3 = Mathf.Sqrt(3);
 

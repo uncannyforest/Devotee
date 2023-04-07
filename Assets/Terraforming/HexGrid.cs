@@ -1,9 +1,16 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
+
 public class HexGrid<T> {
     private List<List<T>> quad1 = new List<List<T>>();
     private List<List<T>> quad2 = new List<List<T>>();
     private List<List<T>> quad3 = new List<List<T>>();
     private List<List<T>> quad4 = new List<List<T>>();
+
+    public List<List<List<T>>> Quads {
+        get => new List<List<List<T>>>() { quad1, quad2, quad3, quad4 };
+    }
 
     private T get2D(List<List<T>> list2d, int x, int y) {
         if (list2d.Count <= x) return default(T);

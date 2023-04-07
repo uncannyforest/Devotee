@@ -76,6 +76,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slope Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 343daac7c9305496b9f897818a364b97, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 343daac7c9305496b9f897818a364b97, type: 3}
 --- !u!1 &701439217984747749 stripped

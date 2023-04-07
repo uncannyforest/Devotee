@@ -44,8 +44,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectible: {fileID: 490366320841724878, guid: 87b40b5198a35498aa85edf1a7577222, type: 3}
-  rate: 1
-  yMovement: 0.2
+  possibilities: []
+  triggers: []
+  triggerLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  radiusSpaceRequired: 0
+  orientation: 1
+  collected: 0
 --- !u!1001 &6584451778890474053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97,6 +103,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8279921643479587019, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -104,6 +114,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
       propertyPath: m_Name
       value: Innerstair Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029857476372711698, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4752888626103974999, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
       propertyPath: m_Materials.Array.data[0]

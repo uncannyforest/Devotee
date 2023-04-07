@@ -27,6 +27,8 @@ public class Interaction : MonoBehaviour {
     }
 
     public bool Use() {
-        return transform.GetChild(currentTool).GetComponent<Tool>().Use();
+        bool used = transform.GetChild(currentTool).GetComponent<Tool>().Use();
+        if (used) StartCoroutine(CollectibleSpawn.UpdateAllTriggers());
+        return used;
     }
 }

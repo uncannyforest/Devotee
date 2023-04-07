@@ -95,7 +95,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.75
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &490366320841724878
 MonoBehaviour:
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568aa26341e5f450f974b132cf6ffd59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yMovement: 1
+  collectibleSpawn: {fileID: 0}
   movementDuration: 4
 --- !u!1 &8518441120049935970
 GameObject:

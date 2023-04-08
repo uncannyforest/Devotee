@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class CollectibleSpawn : MonoBehaviour {
     public Collectible collectible;
-    public Transform[] possibilities; // must match triggers
-    public Transform[] triggers;
     public LayerMask triggerLayerMask;
     public float radiusSpaceRequired = 0;
     public enum Orientation {
@@ -19,19 +17,37 @@ public class CollectibleSpawn : MonoBehaviour {
 
     private Collectible item;
 
+    private Transform[] Possibilities {
+        get {
+            List<Transform> possibilites = new List<Transform>();
+            foreach (Transform child in transform)
+                if (child.gameObject.name == "Possibility")
+                    possibilites.Add(child);
+            return possibilites.ToArray();
+        }
+    }
+
+    private Transform[] GetTriggers(Transform possibility) {
+        List<Transform> triggers = new List<Transform>();
+        foreach (Transform child in possibility)
+            if (child.gameObject.name == "Trigger")
+                triggers.Add(child);
+        return triggers.ToArray();
+    }
+
     void Start() {
         if (orientation == Orientation.Default && Vector3.Dot(transform.up, Vector3.down) > 0)
             gameObject.SetActive(false);
         if (orientation == Orientation.Flipped && Vector3.Dot(transform.up, Vector3.up) > 0)
             gameObject.SetActive(false);
-        if (triggers.Length == 0) Spawn(transform);
-        if (triggers.Length == 1) possibilities = new Transform[] { transform };
+        if (Possibilities.Length == 0) Spawn(transform);
     }
 
     public void UpdateTrigger() {
-        if (triggers.Length == 0 || collected) return;
-        Transform[] triggered = possibilities.Where((p, i) => Physics.Linecast(p.position, triggers[i].position, triggerLayerMask)
-            && !Physics.CheckSphere(p.position, radiusSpaceRequired, triggerLayerMask)).ToArray();
+        if (Possibilities.Length == 0 || collected) return;
+        Transform[] triggered = Possibilities.Where((p) =>
+            !Physics.CheckSphere(p.position, radiusSpaceRequired, triggerLayerMask) &&
+            GetTriggers(p).All((t) => Physics.Linecast(p.position, t.position, triggerLayerMask))).ToArray();
         if (triggered.Length == 0) {
             if (item != null) GameObject.Destroy(item.gameObject);
         } else if (item == null) {

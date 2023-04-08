@@ -8,10 +8,11 @@ public class Mode : MonoBehaviour {
     public Terraformer terraformer;
     public GameObject characterCam;
     public GameObject terraformerCam;
+    public Camera uiCam;
 
     public bool godMode;
 
-    protected void Update() {
+    void Update() {
         if (Input.GetButtonDown("Mode")) {
             if (godMode) {
                 godMode = false;
@@ -19,12 +20,14 @@ public class Mode : MonoBehaviour {
                 terraformerCam.SetActive(false);
                 character.readInput = true;
                 terraformer.enabled = false;
+                uiCam.cullingMask = LayerMask.GetMask("UI", "Perspective UI Only");
             } else {
                 godMode = true;
                 characterCam.SetActive(false);
                 terraformerCam.SetActive(true);
                 character.readInput = false;
                 terraformer.enabled = true;
+                uiCam.cullingMask = LayerMask.GetMask("UI", "Orthographic UI Only");
             }
         }
     }

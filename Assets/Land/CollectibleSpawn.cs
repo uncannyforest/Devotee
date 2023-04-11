@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 
 public class CollectibleSpawn : MonoBehaviour {
-    public Collectible collectible;
     public LayerMask triggerLayerMask;
     public float radiusSpaceRequired = 0;
     public enum Orientation {
@@ -49,11 +48,11 @@ public class CollectibleSpawn : MonoBehaviour {
             !Physics.CheckSphere(p.position, radiusSpaceRequired, triggerLayerMask) &&
             GetTriggers(p).All((t) => Physics.Linecast(p.position, t.position, triggerLayerMask))).ToArray();
         if (triggered.Length == 0) {
-            if (item != null) GameObject.Destroy(item.gameObject);
+            if (item != null) CollectibleSpawnManager.I.Despawn(item);
         } else if (item == null) {
             SpawnRandom(triggered);
         } else if (!triggered.Contains(item.transform.parent)) {
-            GameObject.Destroy(item.gameObject);
+            CollectibleSpawnManager.I.Despawn(item);
             SpawnRandom(triggered);
         }
     }
@@ -63,9 +62,7 @@ public class CollectibleSpawn : MonoBehaviour {
     }
 
     public void Spawn(Transform parent) {
-        item = GameObject.Instantiate<Collectible>(collectible,
-            parent.position, Quaternion.identity);
-        item.transform.parent = parent;
+        item = CollectibleSpawnManager.I.Spawn(parent);
         item.collectibleSpawn = this;
     }
 

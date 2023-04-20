@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
@@ -26,35 +27,32 @@ public class MapPersistence : MonoBehaviour {
 
         MapData mapData = new MapData(land.ToArray());
 
-        Debug.Log(JsonUtility.ToJson(mapData));
-
-        // BinaryFormatter bf = new BinaryFormatter(); 
-        // FileStream file = File.Create(Application.persistentDataPath 
-        //             + "/MySaveData.dat");
-        // bf.Serialize(file, mapData);
-        // file.Close();
-        // Debug.Log("Game data saved to " + Application.persistentDataPath + "/MySaveData.dat");
+        StreamWriter file = new StreamWriter(Application.persistentDataPath 
+                    + "/MySaveData.json");
+        file.Write(JsonUtility.ToJson(mapData));
+        file.Close();
+        Debug.Log("Game data saved to " + Application.persistentDataPath + "/MySaveData.json");
     }
 
     public static void LoadGame() {
-        // if (File.Exists(Application.persistentDataPath 
-        //             + "/MySaveData.dat")) {
-        //     BinaryFormatter bf = new BinaryFormatter();
-        //     FileStream file = File.Open(Application.persistentDataPath 
-        //             + "/MySaveData.dat", FileMode.Open);
-        //     MapData mapData = (MapData)bf.Deserialize(file);
-        //     Debug.Log(mapData);
-        //     file.Close();
+        if (File.Exists(Application.persistentDataPath 
+                    + "/MySaveData.json")) {
+            Debug.Log("Reading game data from " + Application.persistentDataPath + "/MySaveData.json");
+            StreamReader file = new StreamReader(Application.persistentDataPath + "/MySaveData.json");
+            string data = file.ReadToEnd();
+            MapData mapData = JsonUtility.FromJson<MapData>(data);
+            Debug.Log(data);
+            file.Close();
 
-        //     Terrain.I.PopulateTerrainFromData(mapData);
+            Terrain.I.PopulateTerrainFromData(mapData.land);
 
-        //     foreach (Creature.Data creature in mapData.creatures) {
-        //         Instantiate(CreatureLibrary.P.BySpeciesName(creature.species),
-        //                 Terrain.I.CellCenter(creature.tile), Quaternion.identity, Terrain.I.transform)
-        //             .DeserializeUponStart(creature);
-        //     }
+            // foreach (Creature.Data creature in mapData.creatures) {
+            //     Instantiate(CreatureLibrary.P.BySpeciesName(creature.species),
+            //             Terrain.I.CellCenter(creature.tile), Quaternion.identity, Terrain.I.transform)
+            //         .DeserializeUponStart(creature);
+            // }
 
-        //     Debug.Log("Game data loaded!");
-        // } else Debug.LogError("There is no save data!");
+            Debug.Log("Game data loaded!");
+        } else Debug.LogError("There is no save data!");
     }
 }

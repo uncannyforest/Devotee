@@ -5,6 +5,29 @@ using UnityEngine;
 public class Column : MonoBehaviour {
     public HexPos position;
 
+    public static Column Instantiate(Data data) {
+        Column column = Terrain.Grid[data.position];
+
+        if (column) {
+            column.transform.position += data.surface.position - column.Surface.position;
+            for (int i = column.UndergroundCount; i < data.underground.Length; i++) {
+                UndergroundData underground = data.underground[i];
+                column.InstantiateUnderground(underground.undergroundId, underground.position,
+                    underground.yRot, underground.zRot, underground.zOrientation, underground.randomSeed);
+            }
+            return column;
+        }
+
+        column = Instantiate(data.position, data.surface.height);
+        column.InstantiateSurface(data.surface.surfaceId, data.surface.position,
+            data.surface.yRot, data.surface.height, data.surface.zOrientation);
+        foreach (UndergroundData underground in data.underground) {
+            column.InstantiateUnderground(underground.undergroundId, underground.position,
+                underground.yRot, underground.zRot, underground.zOrientation, underground.randomSeed);
+        }
+        return column;
+    }
+
     public static Column Instantiate(HexPos position, float height) {
         Column column = GameObject.Instantiate<Column>(
                 Terrain.I.columnPrefab,
@@ -58,6 +81,7 @@ public class Column : MonoBehaviour {
     public Transform Surface { get => transform.GetChild(0); }
     public Transform DeepestUnderground { get => transform.GetChild(transform.childCount - 1); }
     public bool HasUnderground { get => transform.childCount > 1; }
+    public int UndergroundCount { get => transform.childCount - 1; }
 
     [Serializable] public struct SurfaceData {
         public int surfaceId;

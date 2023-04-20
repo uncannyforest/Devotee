@@ -24,12 +24,19 @@ public class Terrain : MonoBehaviour {
 
     public int maxHeight = 0;
 
-    public void Start() {
+    public void Awake() {
         grid[new HexPos(0, 0)] = transform.GetChild(0).GetComponent<Column>();
         grid[new HexPos(1, 0)] = transform.GetChild(1).GetComponent<Column>();
     }
 
     public bool CanModTerrain(HexPos pos) {
         return !originPositions.Contains(pos);
+    }
+
+    public void PopulateTerrainFromData(Column.Data[] land) {
+        Vector3 startLoc = Terrain.Grid[originPositions[1]].transform.position;
+        foreach (Column.Data column in land) Column.Instantiate(column);
+        Transform player = GameObject.FindGameObjectWithTag("Player").transform;
+        player.position += Terrain.Grid[originPositions[1]].transform.position - startLoc;
     }
 }

@@ -148,7 +148,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 				Debug.DrawLine(transform.position, transform.position + newVelocity, Color.red, 2);
 				
 				m_Rigidbody.velocity = new Vector3(newVelocity.x, m_JumpPower, newVelocity.z);
-				Debug.Log("Was grounded? " + m_IsGrounded + " Jumping - not grounded now!");
+				// Debug.Log("Was grounded? " + m_IsGrounded + " Jumping - not grounded now!");
 				m_IsGrounded = false;
 				m_NextGroundCheckAfterJump = Time.time + m_JumpMinNotGroundedTime;
 				m_Animator.applyRootMotion = false;
@@ -203,7 +203,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 				Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal * .5f, Color.blue, .5f);
 				Debug.DrawLine(transform.position + (Vector3.up * 0.1f), hitInfo.point, Color.magenta, .5f);
 				if (!m_IsGrounded) {
-					Debug.Log("Grounded now!  After frames " + m_AirborneFrameCount);
+					// Debug.Log("Grounded now!  After frames " + m_AirborneFrameCount);
 					m_AirborneFrameCount = 0;
 				}
 				m_IsGrounded = true;

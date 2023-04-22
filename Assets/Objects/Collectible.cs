@@ -12,9 +12,9 @@ public class Collectible : MonoBehaviour {
     }
 
     void OnTriggerEnter(Collider collider) {
-        if (collider.gameObject.tag == "Player") {
-            collectibleSpawn.collected = true;
-            CollectibleSpawnManager.I.Collect(this);
-        }
+        // if (collider.gameObject.tag == "Player") {
+        //     collectibleSpawn.collected = true;
+        //     CollectibleSpawnManager.I.Collect(this);
+        // }
     }
 }

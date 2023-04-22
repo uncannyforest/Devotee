@@ -33,6 +33,11 @@ public class Terrain : MonoBehaviour {
         return !originPositions.Contains(pos);
     }
 
+    public Transform GetClosestLandPiece(Vector3 worldPosition) {
+        HexPos pos = HexPos.FromWorldCoord(worldPosition / scale);
+        return grid[pos].Surface;
+    }
+
     public void PopulateTerrainFromData(Column.Data[] land) {
         Vector3 startLoc = Terrain.Grid[originPositions[1]].transform.position;
         foreach (Column.Data column in land) Column.Instantiate(column);

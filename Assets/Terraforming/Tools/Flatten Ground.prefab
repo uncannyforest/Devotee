@@ -108,14 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b380820f19474e11bc9a6ec604c5b1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slopedness: 3
-  adjacentColor: {r: 0, g: 0.5019608, b: 0.16470589, a: 1}
-  selectorInvalid: {r: 1, g: 0.33333334, b: 0, a: 1}
-  flatLand: {fileID: 4545655038261800226, guid: 71cbd32e8ac964d28a19216640cd1e12, type: 3}
-  slopeLand: {fileID: 701439217984747749, guid: 11124301d69f0411b907b616b80a6311, type: 3}
-  cliffLand: {fileID: 5720071849907294972, guid: 9226218e4f9d5429ebec5e0e8cee7a26, type: 3}
-  cliffEndLand: {fileID: 1584882021416367354, guid: 5d29d42f000a34c68902cda6027d228b, type: 3}
-  bridgeLand: {fileID: 7879403455986412941, guid: c23e17648e63742438cba00088294f45, type: 3}
+  heightDiffs: 0000000003000000090000000c0000000900000003000000
+  selectorPartial: {r: 0.83333325, g: 1, b: 0, a: 0}
 --- !u!1001 &3898955757450694372
 PrefabInstance:
   m_ObjectHideFlags: 0

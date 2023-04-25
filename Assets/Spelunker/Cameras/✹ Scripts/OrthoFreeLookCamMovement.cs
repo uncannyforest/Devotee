@@ -57,7 +57,7 @@ public class OrthoFreeLookCamMovement : MonoBehaviour
     {
         if (Input.GetButtonDown("Reset Camera")) {
             m_AimingForIso = IsoResetAim(out Transform player);
-            m_Target.Position = HexPos.FromWorldCoord(player.position / Terrain.I.scale);
+            m_Target.Position = HexPos.FromWorld(player.position);
         }
         HandleRotationMovement();
         if (m_LockCursor && Input.GetMouseButtonUp(0))

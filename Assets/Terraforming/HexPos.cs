@@ -14,11 +14,13 @@ public struct HexPos {
     public int x;
     public int y;
 
-    public static implicit operator Vector2(HexPos pos)
+    public static explicit operator Vector2(HexPos pos)
         => new Vector2((pos.x + pos.y) * 1.5f, (pos.y - pos.x) * SQRT3 / 2);
-    public static implicit operator Vector3(HexPos pos)
+    public static explicit operator Vector3(HexPos pos)
         => new Vector3((pos.x + pos.y) * 1.5f, 0, (pos.y - pos.x) * SQRT3 / 2);
-    public static HexPos FromWorldCoord(Vector3 coord) {
+    public Vector3 World { get => ((Vector3)this) * Terrain.I.scale; }
+    public static HexPos FromWorld(Vector3 worldCoord) {
+        Vector3 coord = worldCoord / Terrain.Scale;
         float fX = (Quaternion.Euler(0, -120, 0) * coord).z / 1.5f;
         float fY = coord.z / 1.5f;
         float fZ = (Quaternion.Euler(0, 120, 0) * coord).z / 1.5f; // z = - x - y https://www.redblobgames.com/grids/hexagons/#rounding
@@ -37,12 +39,16 @@ public struct HexPos {
         return new HexPos(x, y);
     }
 
+    public static HexPos zero => new HexPos(0, 0);
     public static HexPos E => new HexPos(0, 1);
     public static HexPos W => new HexPos(-1, 1);
     public static HexPos Q => new HexPos(-1, 0);
     public static HexPos A => new HexPos(0, -1);
     public static HexPos S => new HexPos(1, -1);
     public static HexPos D => new HexPos(1, 0);
+    public static int[][] allUnitCorners = new int[][] {
+        E.UnitCorners, W.UnitCorners, Q.UnitCorners, A.UnitCorners, S.UnitCorners, D.UnitCorners
+    };
 
     public static HexPos operator +(HexPos a, HexPos b) => new HexPos(a.x + b.x, a.y + b.y);
     public static HexPos operator -(HexPos a, HexPos b) => new HexPos(a.x - b.x, a.y - b.y);
@@ -74,8 +80,10 @@ public struct HexPos {
         else if (this == Q) return 180;
         else if (this == A) return 240;
         else if (this == S) return 300;
-        else throw new InvalidOperationException();
+        else throw new InvalidOperationException("Not unit hex: " + ToString());
     }
+
+    public int[] UnitCorners { get => new int[] {(ToUnitRotation() / 60 + 5) % 6, ToUnitRotation() / 60}; }
 
     override public string ToString() => "(" + x + ", " + y + ")";
 }

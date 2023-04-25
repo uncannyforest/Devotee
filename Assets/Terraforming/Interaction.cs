@@ -56,8 +56,8 @@ public class Interaction : MonoBehaviour {
         if (Input.GetKeyDown("4")) CurrentTool = 3;
     }
 
-    public void WillUpdatePos(HexPos pos) {
-        transform.GetChild(currentTool).GetChild(0).GetComponent<Tool>().WillUpdatePos(pos);
+    public void UpdatePos(HexPos pos) {
+        transform.GetChild(currentTool).GetChild(0).GetComponent<Tool>().UpdatePos(pos);
     }
 
     public bool Use() {

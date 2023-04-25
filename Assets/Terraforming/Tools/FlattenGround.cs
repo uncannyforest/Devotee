@@ -3,300 +3,135 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FlattenGround : Tool {
-    public int slopedness = 3;
-    public Color adjacentColor;
-    public Color selectorInvalid;
-    public GameObject flatLand;
-    public GameObject slopeLand;
-    public GameObject cliffLand;
-    public GameObject cliffEndLand;
-    public GameObject bridgeLand;
+    public int[] heightDiffs = new int[] {0, 4, 8, 12, 8, 4};
+    public Color selectorPartial;
 
-    private Selector selector1;
-    private Selector selector2;
-
-    void Start() {
-        selector = GameObject.Find("Selector").GetComponent<Selector>();
-    }
+    private int corner = 0;
 
     override public void Load() {
-        selector1 = GameObject.Instantiate(selector.gameObject, selector.transform.parent).GetComponent<Selector>();
-        selector2 = GameObject.Instantiate(selector.gameObject, selector.transform.parent).GetComponent<Selector>();
-        selector1.Position = selector.Position + HexPos.D;
-        selector2.Position = selector.Position + HexPos.E;
-        selector1.Color = adjacentColor;
-        selector2.Color = adjacentColor;
+        UpdatePos(selector.Position + HexPos.E);
     }
 
     override public void Unload() {
-        GameObject.Destroy(selector1.gameObject);
-        GameObject.Destroy(selector2.gameObject);
+        selector.Position = selector.Position;
     }
 
-    public static int GetHeightDifference(HexPos position, HexPos adjacentPosition) {
-        return GetHeight(position, adjacentPosition) - GetHeight(adjacentPosition, position);
+    // public static int GetHeight(HexPos position, HexPos adjacentPosition) {
+    //     Column column = Terrain.Grid[position];
+    //     if (column == null) return 0;
+    //     int level = Mathf.FloorToInt(column.Surface
+    //         .GetComponent<EdgeLevels>().GetLevel(adjacentPosition - position));
+    //     return level > 0 ? level : 0;
+    // }
+
+    public static int MathMid(int a, int b, int c) {
+        int lower = Mathf.Min(a, b);
+        int higher = Mathf.Max(a, b);
+        return c < lower ? lower : c > higher ? higher : c;
     }
 
-    public static int GetHeight(HexPos position, HexPos adjacentPosition) {
-        Column column = Terrain.Grid[position];
-        if (column == null) return 0;
-        int level = Mathf.FloorToInt(column.Surface
-            .GetComponent<EdgeLevels>().GetLevel(adjacentPosition - position));
-        return level > 0 ? level : 0;
-    }
-
-    public override void WillUpdatePos(HexPos pos) {
-        if (pos == selector1.Position) {
-            selector1.Position = selector2.Position;
-            selector2.Position = Position;
-        } else if (pos == selector2.Position) {
-            selector2.Position = selector1.Position;
-            selector1.Position = Position;
-        } else if (pos - selector1.Position == Position - selector2.Position) {
-            selector2.Position = Position;
-        } else if (pos - selector2.Position == Position - selector1.Position) {
-            selector1.Position = Position;
+    public override void UpdatePos(HexPos pos) {
+        HexPos diff = pos - selector.Position;
+        if (diff == HexPos.zero || diff == new HexPos(2, 0)) return;
+        int rot = diff.ToUnitRotation() / 60;
+        int change = (rot - corner + 6) % 6;
+        if (change < 2) {
+            selector.Position = pos;
+            corner = (corner + (change == 0 ? 1 : 5)) % 6;
         } else {
-            HexPos diff = pos - Position;
-            selector1.Position += diff;
-            selector2.Position += diff;
+            selector.Position = selector.Position;
+            corner = (corner + (change < 4 ? 1 : 5)) % 6;
         }
-        int height1 = GetHeight(selector1.Position, pos);
-        int height2 = GetHeight(selector2.Position, pos);
-        Debug.Log("Heights: " + height1 + ", " + height2);
-        if (Mathf.Abs(height1 - height2) > 2 * Terrain.I.scale) {
-            selector1.Color = selectorInvalid;
-            selector2.Color = selectorInvalid;
-        } else {
-            selector1.Color = adjacentColor;
-            selector2.Color = adjacentColor;
-        }
+        selector.transform.position += Quaternion.Euler(0, corner * -60 - 30, 0) * new Vector3(Terrain.I.scale, 0, 0);
+        Debug.Log("Rot: " + rot + " Corner: " + corner);
+        UpdateColor();
     }
 
-    override public bool Use() => Use(slopedness, Position, selector1.Position, selector2.Position, true,
-        flatLand, slopeLand, cliffLand, cliffEndLand, bridgeLand);
-
-    public static bool Use(int slopedness, HexPos position, HexPos position1, HexPos position2, bool considerBridge,
-            GameObject flatLand, GameObject slopeLand, GameObject cliffLand, GameObject cliffEndLand, GameObject bridgeLand) {
-        if (!Terrain.I.CanModTerrain(position)) return false;
-        int height1 = GetHeight(position1, position);
-        int height2 = GetHeight(position2, position);
-        int height3 = GetHeight(position2 - position1 + position, position);
-        int height4 = GetHeight(position * 2 - position1, position);
-        int height5 = GetHeight(position * 2 - position2, position);
-        int height6 = GetHeight(position1 - position2 + position, position);
-        int diff = height2 - height1;
-        bool maybeFlip = Random.value > .5f;
-        if (Mathf.Abs(diff) > (considerBridge ? 2 : 1) * Terrain.I.scale) return false;
-        else if (diff > Terrain.I.scale) {
-            SetNewGround(position, bridgeLand,
-                height1,
-                (position2 - position1).ToUnitRotation(),
-                Mathf.FloorToInt(diff / 2f),
-                true);
-        } else if (diff < -Terrain.I.scale) {
-            SetNewGround(position, bridgeLand,
-                height2,
-                (position2 - position1).ToUnitRotation(),
-                Mathf.FloorToInt(diff / -2f),
-                false);
-        } else if (diff > slopedness) {
-            if (height2 - diff / 4f < height3 && height6 < height1 + diff / 4f)
-                SetNewGround(position, cliffLand,
-                    height1 - Mathf.FloorToInt(diff / 2f),
-                    (position1 - position2).ToUnitRotation(),
-                    diff,
-                    maybeFlip);
-            // else if (diff <= Terrain.I.scale / 2 && height4 <= height1 && height5 <= height1 - diff)
-            //     SetNewGround(position, slopeLand,
-            //         height1 - diff * 2,
-            //         (position1 - position).ToUnitRotation() - (maybeFlip ? 180 : 0),
-            //         diff * 2,
-            //         maybeFlip);
-            // else if (diff <= Terrain.I.scale / 2 && height5 >= height2 && height4 >= height2 + diff)
-            //     SetNewGround(position, slopeLand,
-            //         height1 - diff,
-            //         (position2 - position).ToUnitRotation() - (maybeFlip ? 180 : 0),
-            //         diff * 2,
-            //         maybeFlip);
-            else
-                SetNewGround(position, cliffEndLand,
-                    height1 - Mathf.FloorToInt(diff / 2f),
-                    (position2 - position1).ToUnitRotation(),
-                    diff,
-                    false);
-        } else if (diff < -slopedness) {
-            if (height1 - diff / 4f < height6 && height3 < height2 + diff / 4f)
-                SetNewGround(position, cliffLand,
-                    height2 - Mathf.FloorToInt(-diff / 2f),
-                    (position2 - position1).ToUnitRotation(),
-                    -diff,
-                    maybeFlip);
-            // else if (-diff <= Terrain.I.scale / 2 && height5 <= height2 && height4 <= height2 + diff)
-            //     SetNewGround(position, slopeLand,
-            //         height2 + diff * 2,
-            //         (position - position2).ToUnitRotation() - (maybeFlip ? 180 : 0),
-            //         -diff * 2,
-            //         maybeFlip);
-            // else if (-diff <= Terrain.I.scale / 2 && height4 >= height1 && height5 >= height1 - diff)
-            //     SetNewGround(position, slopeLand,
-            //         height2 + diff,
-            //         (position - position1).ToUnitRotation() - (maybeFlip ? 180 : 0),
-            //         -diff * 2,
-            //         maybeFlip);
-            else
-                SetNewGround(position, cliffEndLand,
-                    height2 - Mathf.FloorToInt(-diff / 2f),
-                    (position1 - position2).ToUnitRotation(),
-                    -diff,
-                    true);
+    public void UpdateColor() {
+        HexPos pos1 = selector.Position + HexPos.D.Rotate(corner * 60);
+        HexPos pos2 = selector.Position + HexPos.E.Rotate(corner * 60);
+        if (!Terrain.I.CanModTerrain(selector.Position)
+                || !Terrain.I.CanModTerrain(pos1)
+                || !Terrain.I.CanModTerrain(pos2)) {
+            selector.Color = terraformer.selectorInvalid;
         } else {
-            // round down if diff == 1, up otherwise
-            int height0 = Mathf.Abs(diff) <= 1 ? Mathf.Min(height1, height2) : Mathf.CeilToInt((height1 + height2) / 2f);
-            if (height3 < height0 && height6 > height0) {
-                int halfDiff = Mathf.Min((height0 - height3)*2, (height6 - height0)*2, Terrain.I.scale / 2);
-                SetNewGround(position, cliffEndLand,
-                    height0 - halfDiff * 2,
-                    (position1 - position2).ToUnitRotation(),
-                    halfDiff * 2,
-                    false);
-            } else if (height6 < height0 && height0 < height3) {
-                int halfDiff = Mathf.Min((height0 - height6)*2, (height3 - height0)*2, Terrain.I.scale / 2);
-                SetNewGround(position, cliffEndLand,
-                    height0 - halfDiff * 2,
-                    (position2 - position1).ToUnitRotation(),
-                    halfDiff * 2,
-                    true);
-            } else if (height4 < height0 && height5 < height0) {
-                diff = Mathf.Min(height0 - height4, height0 - height5, Terrain.I.scale);
-                if (height3 <= height0 - diff && height6 >= height0)
-                    SetNewGround(position, cliffLand,
-                        height0 - diff - Mathf.FloorToInt(diff / 2f),
-                        (position - position1).ToUnitRotation(),
-                        diff,
-                        maybeFlip);
-                else if (height3 >= height0 && height6 <= height0 - diff)
-                    SetNewGround(position, cliffLand,
-                        height0 - diff - Mathf.FloorToInt(diff / 2f),
-                        (position - position2).ToUnitRotation(),
-                        diff,
-                        maybeFlip);
-                else
-                    SetNewGround(position, slopeLand,
-                        height0 - diff - Mathf.FloorToInt(diff / 2f),
-                        (position1 - position2).ToUnitRotation() - (maybeFlip ? 180 : 0),
-                        diff,
-                        maybeFlip);
-            } else if (height4 > height0 && height5 > height0) {
-                diff = Mathf.Min(height4 - height0, height5 - height0, Terrain.I.scale);
-                if (height3 >= height0 + diff && height6 <= height0)
-                    SetNewGround(position, cliffLand,
-                        height0 - Mathf.FloorToInt(diff / 2f),
-                        (position1 - position).ToUnitRotation(),
-                        diff,
-                        maybeFlip);
-                else if (height3 <= height0 && height6 >= height0 + diff)
-                    SetNewGround(position, cliffLand,
-                        height0 - Mathf.FloorToInt(diff / 2f),
-                        (position2 - position).ToUnitRotation(),
-                        diff,
-                        maybeFlip);
-                else
-                    SetNewGround(position, slopeLand,
-                        height0 - Mathf.FloorToInt(diff / 2f),
-                        (position2 - position1).ToUnitRotation() - (maybeFlip ? 180 : 0),
-                        diff,
-                        maybeFlip);
-            } else {
-                SetNewGround(position, flatLand,
-                    height0,
-                    60 * Random.Range(0, 6),
-                    maybeFlip);
+            int myCorner = SurfaceHeight.GetHeight(selector.Position, corner);
+            int corner1 = SurfaceHeight.GetHeight(pos1, (corner + 2) % 6);
+            int corner2 = SurfaceHeight.GetHeight(pos2, (corner + 4) % 6);
+            int minHeight = Mathf.Min(myCorner, corner1, corner2);
+            int overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            int overheight1 = SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            int overheight2 = SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            if (overheight0 + overheight1 + overheight2 == 0) selector.Color = terraformer.selectorReady;
+            else if (overheight0 + overheight1 + overheight2 == 1) selector.Color = selectorPartial;
+            else {
+                minHeight = MathMid(myCorner, corner1, corner2);
+                overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+                overheight1 = SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+                overheight2 = SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+                if (overheight0 + overheight1 + overheight2 > 0) selector.Color = terraformer.selectorInvalid;
+                else selector.Color = selectorPartial;
             }
         }
+    }
+
+    public override bool Use() {
+        HexPos pos1 = selector.Position + HexPos.D.Rotate(corner * 60);
+        HexPos pos2 = selector.Position + HexPos.E.Rotate(corner * 60);
+        if (!Terrain.I.CanModTerrain(selector.Position)
+            || !Terrain.I.CanModTerrain(pos1)
+            || !Terrain.I.CanModTerrain(pos2)) return false;
+        int myCorner = SurfaceHeight.GetHeight(selector.Position, corner);
+        int corner1 = SurfaceHeight.GetHeight(pos1, (corner + 2) % 6);
+        int corner2 = SurfaceHeight.GetHeight(pos2, (corner + 4) % 6);
+        int minHeight = Mathf.Min(myCorner, corner1, corner2);
+        bool modCorner0, modCorner1, modCorner2;
+        int overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+        int overheight1 = SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+        int overheight2 = SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+        if (overheight0 + overheight1 + overheight2 <= 1) {
+            modCorner0 = overheight0 == 0;
+            modCorner1 = overheight1 == 0;
+            modCorner2 = overheight2 == 0;
+        } else {
+            modCorner0 = overheight0 != 0;
+            modCorner1 = overheight1 != 0;
+            modCorner2 = overheight2 != 0;
+            minHeight = MathMid(myCorner, corner1, corner2);
+            overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            overheight1 = SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            overheight2 = SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            if (overheight0 + overheight1 + overheight2 > 0) return false; // all three two far from each other
+        }
+        if ((modCorner0 && myCorner > minHeight) || (modCorner1 && corner1 > minHeight) || (modCorner2 && corner2 > minHeight)) {
+            if (modCorner0 && myCorner > minHeight) SetNewGround(selector.Position, corner, minHeight);
+            if (modCorner1 && corner1 > minHeight) SetNewGround(pos1, (corner + 2) % 6, minHeight);
+            if (modCorner2 && corner2 > minHeight) SetNewGround(pos2, (corner + 4) % 6, minHeight);
+        } else {
+            if (modCorner0) SetNewGround(selector.Position, corner, minHeight + 1);
+            if (modCorner1) SetNewGround(pos1, (corner + 2) % 6, minHeight + 1);
+            if (modCorner2) SetNewGround(pos2, (corner + 4) % 6, minHeight + 1);
+        }
+        UpdateColor();
         return true;
     }
     
-    public static void SetNewGround(HexPos position, GameObject prefab, int elevationBase, int rotation, int elevationScale, bool flip) {
+    public void SetNewGround(HexPos position, int corner, int cornerHeight) {
         if (!Terrain.I.CanModTerrain(position)) return;
-        Debug.Log(elevationBase + " " + rotation + " " + elevationScale + " " + flip);
 
         if (Terrain.Grid[position] == null) {
-            int height = elevationScale;
-            Column column = Column.Instantiate(position, elevationBase);
-            Transform surface = column.InstantiateSurface(
-                prefab.GetComponent<Land>().id,
-                column.transform.position,
-                -rotation,
-                height,
-                flip ? -1 : 1);
-            RaiseGround.ExtendColumn(position, 0, null);
+            if (cornerHeight == 0) return;
+            Column column = Column.Instantiate(position, 0, new int[] {1, 1, 1, 1, 1, 1});
+            column.Surface.GetComponent<MeshGenerator>().SetCornerReturningDiff(corner, Mathf.RoundToInt(cornerHeight + 1));
         } else {
             Column column = Terrain.Grid[position];
-            int oldElevationBase = Mathf.FloorToInt(column.Surface.position.y);
-            int comingRigidbodyMove = elevationBase - oldElevationBase;
-            if (comingRigidbodyMove > 0) {
-                RaiseGround.RaiseColumn(position, comingRigidbodyMove, null);
-            } else if (comingRigidbodyMove < 0) {
-                column.GetComponent<Rigidbody>().MovePosition(column.transform.position + comingRigidbodyMove * Vector3Int.up);
+            int[] heights = column.Heights;
+            int[] newHeights = new int[6];
+            newHeights[corner] = cornerHeight;
+            for (int i = 1; i < 6; i++) {
+                newHeights[(corner + i) % 6] = Mathf.Max(heights[(corner + i) % 6], cornerHeight - heightDiffs[i]);
             }
-
-            Vector3 originalPosition = column.Surface.position;
-            GameObject.Destroy(column.Surface.gameObject);
-            Transform surface = column.InstantiateSurface(
-                prefab.GetComponent<Land>().id,
-                new Vector3(column.transform.position.x, elevationBase - comingRigidbodyMove, column.transform.position.z),
-                -rotation,
-                elevationScale,
-                flip ? -1 : 1);
-            surface.SetAsFirstSibling();
-        }
-
-    }
-
-    public static void SetNewGround(HexPos position, GameObject prefab, int elevation, int rotation, bool flip) {
-        if (!Terrain.I.CanModTerrain(position)) return;
-        Debug.Log(elevation + " " + rotation + " " + flip);
-
-        if (Terrain.Grid[position] == null) {
-            int height = Random.Range(1, Terrain.I.scale + 1);
-            Column column = Column.Instantiate(position, elevation - height);
-            Transform surface = column.InstantiateSurface(
-                prefab.GetComponent<Land>().id,
-                column.transform.position,
-                -rotation,
-                height,
-                flip ? -1 : 1);
-            RaiseGround.ExtendColumn(position, 0, null);
-        } else {
-            Column column = Terrain.Grid[position];
-            int baseElevation = Mathf.FloorToInt(column.Surface.position.y);
-            int intendedHeight = elevation - baseElevation;
-            int height;
-            int comingRigidbodyMove = 0;
-            if (intendedHeight > Terrain.I.scale) {
-                height = Random.Range(1, Terrain.I.scale + 1);
-                comingRigidbodyMove = intendedHeight - height;
-                baseElevation += comingRigidbodyMove;
-                RaiseGround.RaiseColumn(position, comingRigidbodyMove, null);
-            } else if (intendedHeight > 0) {
-                height = intendedHeight;
-            } else {
-                height = Random.Range(1, Terrain.I.scale + 1);
-                comingRigidbodyMove = intendedHeight - height;
-                baseElevation += comingRigidbodyMove;
-                column.GetComponent<Rigidbody>().MovePosition(column.transform.position + comingRigidbodyMove * Vector3Int.up);
-            }
-
-            Vector3 originalPosition = column.Surface.position;
-            GameObject.Destroy(column.Surface.gameObject);
-            Transform surface = column.InstantiateSurface(
-                prefab.GetComponent<Land>().id,
-                new Vector3(column.transform.position.x, baseElevation - comingRigidbodyMove, column.transform.position.z),
-                -rotation,
-                height,
-                flip ? -1 : 1);
-            surface.SetAsFirstSibling();
+            column.SetHeights(newHeights, false);
         }
     }
 }

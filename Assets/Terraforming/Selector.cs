@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Selector : MonoBehaviour {
+    public float defaultSize = 10.01f;
+
     private HexPos pos = new HexPos();
 
     public HexPos Position {
@@ -13,7 +15,7 @@ public class Selector : MonoBehaviour {
                 Vector3 terrainPosition = Terrain.Grid[value].Surface.position;
                 transform.position = new Vector3(terrainPosition.x, Mathf.Max(0, terrainPosition.y), terrainPosition.z);
             } else {
-                transform.localPosition = pos;
+                transform.localPosition = pos.World;
             }
         }
     }

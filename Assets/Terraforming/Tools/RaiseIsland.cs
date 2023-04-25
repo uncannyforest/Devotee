@@ -1,145 +1,146 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RaiseIsland : Tool {
-    public int slopedness = 5;
     public int islandIterations = 3;
 
-    public GameObject flatLand;
-    public GameObject slopeLand;
-    public GameObject cliffLand;
-    public GameObject cliffEndLand;
-    public GameObject bridgeLand;
-
     override public void Load() {
-        selector.transform.localScale = new Vector3(3, selector.transform.localScale.y, 3);
+        selector.transform.localScale = new Vector3(3 * selector.defaultSize, selector.transform.localScale.y, 3 * selector.defaultSize);
     }
 
     override public void Unload() {
-        selector.transform.localScale = new Vector3(1, selector.transform.localScale.y, 1);
+        selector.transform.localScale = new Vector3(selector.defaultSize, selector.transform.localScale.y, selector.defaultSize);
     }
 
-    private void IncrementCompass(ref HexPos e, ref HexPos w, ref HexPos q, ref HexPos a, ref HexPos s, ref HexPos d) {
-        e += HexPos.E;
-        w += HexPos.W;
-        q += HexPos.Q;
-        a += HexPos.A;
-        s += HexPos.S;
-        d += HexPos.D;
+    private HexPos Dir(int i) {
+        return new HexPos[] { HexPos.E, HexPos.W, HexPos.Q, HexPos.A, HexPos.S, HexPos.D }[i % 6];
+    }
+    private void IncrementCompass(HexPos[] axes) {
+        for (int i = 0; i < 6; i++) axes[i] += Dir(i);
+    }
+
+    public static void CreateNewGround(HexPos position) {
+        if (!Terrain.I.CanModTerrain(position) || Terrain.Grid[position] != null) return;
+        Column column = Column.Instantiate(position, 0, SurfaceHeight.MoreRandomSurface());
     }
 
     override public bool Use() {
         RaiseGround.Use(Position);
 
-        HexPos e = Position;
-        HexPos w = Position;
-        HexPos q = Position;
-        HexPos a = Position;
-        HexPos s = Position;
-        HexPos d = Position;
-        IncrementCompass(ref e, ref w, ref q, ref a, ref s, ref d);
+        HexPos[] compass = new HexPos[] { Position, Position, Position, Position, Position, Position };
+        IncrementCompass(compass);
 
-        if (Terrain.Grid[e] == null) RaiseGround.Use(e);
-        if (Terrain.Grid[w] == null) RaiseGround.Use(w);
-        if (Terrain.Grid[q] == null) RaiseGround.Use(q);
-        if (Terrain.Grid[a] == null) RaiseGround.Use(a);
-        if (Terrain.Grid[s] == null) RaiseGround.Use(s);
-        if (Terrain.Grid[d] == null) RaiseGround.Use(d);
+        foreach (HexPos axis in compass)
+            if (Terrain.Grid[axis] == null) CreateNewGround(axis);
 
-        int yPos = 0;
-
-        if (FlattenGround.GetHeightDifference(e, Position) < 0)
-            yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(e, FlattenGround.GetHeightDifference(Position, e), null));
-        if (FlattenGround.GetHeightDifference(w, Position) < 0)
-            yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(w, FlattenGround.GetHeightDifference(Position, w), null));
-        if (FlattenGround.GetHeightDifference(q, Position) < 0)
-            yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(q, FlattenGround.GetHeightDifference(Position, q), null));
-        if (FlattenGround.GetHeightDifference(a, Position) < 0)
-            yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(a, FlattenGround.GetHeightDifference(Position, a), null));
-        if (FlattenGround.GetHeightDifference(s, Position) < 0)
-            yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(s, FlattenGround.GetHeightDifference(Position, s), null));
-        if (FlattenGround.GetHeightDifference(d, Position) < 0)
-            yPos = Mathf.Max(yPos, RaiseGround.RaiseColumn(d, FlattenGround.GetHeightDifference(Position, d), null));
-
-        RaiseGround.MaybeRaiseOrigin(yPos);
+        for (int i = 0; i < 6; i++) {
+            HexPos axis = compass[i];
+            int[] diffs = SurfaceHeight.GetSeafloorHeightDifferences(axis, Position);
+            int max = Mathf.Max(diffs);
+            if (max < 0)
+                 SurfaceHeight.RaiseColumn(axis, Mathf.Min(-max, 2), null);
+            if (Mathf.Min(diffs) < 0) {
+                for (int d = 0; d < 2; d++) {
+                    if (diffs[d] < max) SurfaceHeight.RaiseCorner(axis, (Position - axis).UnitCorners[d], 1, true);
+                }
+            }
+        }
+        for (int i = 0; i < 6; i++) {
+            HexPos cur = compass[i];
+            HexPos adj = compass[(i + 1) % 6];
+            int diff = SurfaceHeight.GetSeafloorHeightDifferences(cur, adj)[0];
+            if (diff < 0) SurfaceHeight.RaiseCorner(cur, (adj - cur).UnitCorners[0], 1, true);
+            else if (diff > 0) SurfaceHeight.RaiseCorner(adj, (cur - adj).UnitCorners[1], 1, true);
+        }
 
         for (int i = 1; i <= islandIterations; i++) {
             bool changed = false;
-            bool cornerE = false;
-            bool cornerW = false;
-            bool cornerQ = false;
-            bool cornerA = false;
-            bool cornerS = false;
-            bool cornerD = false;
-            changed |= FlattenRow(e + HexPos.W, HexPos.A, HexPos.S, HexPos.Q, i, ref cornerE, ref cornerW);
-            changed |= FlattenRow(w + HexPos.Q, HexPos.S, HexPos.D, HexPos.A, i, ref cornerW, ref cornerQ);
-            changed |= FlattenRow(q + HexPos.A, HexPos.D, HexPos.E, HexPos.S, i, ref cornerQ, ref cornerA);
-            changed |= FlattenRow(a + HexPos.S, HexPos.E, HexPos.W, HexPos.D, i, ref cornerA, ref cornerS);
-            changed |= FlattenRow(s + HexPos.D, HexPos.W, HexPos.Q, HexPos.E, i, ref cornerS, ref cornerD);
-            changed |= FlattenRow(d + HexPos.E, HexPos.Q, HexPos.A, HexPos.W, i, ref cornerD, ref cornerE);
+            for (int d = 0; d < 6; d++)
+                changed |= FlattenRow(compass[d] + Dir(d + 1), Dir(d + 2), Dir(d + 3), Dir(d + 4), i);
             if (!changed) break;
-            IncrementCompass(ref e, ref w, ref q, ref a, ref s, ref d);
-            if (cornerE) Flatten120Deg(e, HexPos.E);
-            if (cornerW) Flatten120Deg(w, HexPos.Q);
-            if (cornerQ) Flatten120Deg(q, HexPos.A);
-            if (cornerA) Flatten120Deg(a, HexPos.S);
-            if (cornerS) Flatten120Deg(s, HexPos.S);
-            if (cornerD) Flatten120Deg(d, HexPos.D);
+            IncrementCompass(compass);
+            for (int d = 0; d < 6; d++)
+                FlattenAxis(compass[d], Dir(d + 2), Dir(d + 3), Dir(d + 4), i);
         }
 
         return true;
     }
 
-    private bool FlattenRow(HexPos start, HexPos comparison1, HexPos comparison2, HexPos direction, int times,
-            ref bool corner0, ref bool corner1) {
+    private bool FlattenRow(HexPos start, HexPos direction, HexPos comparison0, HexPos comparison1, int times) {
         bool changed = false;
+        HexPos cur = start;
         for (int i = 0; i < times; i++) {
-            if (FlattenGround.GetHeightDifference(start + comparison1, start) > slopedness
-                    || FlattenGround.GetHeightDifference(start + comparison2, start) > slopedness) {
-                changed |= FlattenGround.Use(slopedness, start, start + comparison1, start + comparison2, Random.value < .1f,//1f / Terrain.I.randomSurface.Length,
-                    flatLand, slopeLand, cliffLand, cliffEndLand, bridgeLand);
-                if (i == 0) corner0 = true;
-                if (i == times - 1) corner1 = true;
+            if (Terrain.Grid[cur] == null) CreateNewGround(cur);
+            Terrain.Grid[cur].debugInfo = "";
+            int[] diffs = SurfaceHeight.GetSeafloorHeightDifferences(cur, cur + comparison0).Concat(
+                SurfaceHeight.GetSeafloorHeightDifferences(cur, cur + comparison1)).ToArray();
+            Terrain.Grid[cur].debugInfo += "diffs " + diffs[0] + " " + diffs[1] + " " + diffs[2] + " " + diffs[3];
+            int max = Mathf.Max(diffs);
+            Terrain.Grid[cur].debugInfo += " max " + max;
+            if (max < 0) {
+                Terrain.Grid[cur].debugInfo += " all " + Mathf.Min(-max, 1 + times * 2);
+                if (Terrain.Grid[cur] == null) CreateNewGround(cur);
+                SurfaceHeight.RaiseColumn(cur, Mathf.Min(-max, 1 + times * 2), null);
+                changed = true;
             }
-            start = start + direction;
+            if (Mathf.Min(diffs) < 0) {
+                max = Mathf.Min(max, 0);
+                int[] cornersToRaise = new int[] {0, 0, 0, 0, 0, 0};
+                if (diffs[0] < max) cornersToRaise[comparison0.UnitCorners[0]] = Mathf.Min(2, max - diffs[0]);
+                if (diffs[1] < max || diffs[2] < max) cornersToRaise[comparison0.UnitCorners[1]] = Mathf.Min(2, max - Mathf.Min(diffs[1], diffs[2]));
+                if (diffs[3] < max) cornersToRaise[comparison1.UnitCorners[1]] = Mathf.Min(2, max - diffs[3]);
+                Terrain.Grid[cur].debugInfo += " corners " + cornersToRaise[0] + " " + cornersToRaise[1] + " " + cornersToRaise[2] + " " + cornersToRaise[3] + " " + cornersToRaise[4] + " " + cornersToRaise[5];
+                RaiseCorners(cur, cornersToRaise, true);
+            }
+            cur = cur + direction;
         }
+        cur = start;
+        for (int i = 0; i < times - 1; i++) {
+            HexPos adj = cur + direction;
+            int diff = SurfaceHeight.GetSeafloorHeightDifferences(cur, adj)[0];
+            if (diff < 0) RaiseCorner(cur, direction.UnitCorners[0], Mathf.Min(2, -diff), true);
+            else if (diff > 0) RaiseCorner(adj, direction.UnitCorners[1], Mathf.Min(2, -diff), true);
+            cur = adj;
+        }
+
         return changed;
     }
 
-    private void Flatten120Deg(HexPos position, HexPos comparison) {
-        comparison = comparison.Rotate(180);
-        int height1 = FlattenGround.GetHeight(position + comparison.Rotate(-60), position);
-        int height2 = FlattenGround.GetHeight(position + comparison.Rotate(60), position);
-        // reference the larger one
-        if (height2 < height1 - slopedness) {
-            FlattenGround.Use(slopedness, position, position + comparison.Rotate(-60), position + comparison, Random.value < .1f,//1f / Terrain.I.randomSurface.Length,
-                    flatLand, slopeLand, cliffLand, cliffEndLand, bridgeLand);
-        } else if (height1 < height2 - slopedness) {
-            FlattenGround.Use(slopedness, position, position + comparison, position + comparison.Rotate(60), Random.value < .5f,//1f / Terrain.I.randomSurface.Length,
-                    flatLand, slopeLand, cliffLand, cliffEndLand, bridgeLand);
-        } else {
-            int height3 = FlattenGround.GetHeight(position - comparison, position);
-            height3 = Mathf.Max(height3, height1 - Terrain.I.scale);
-            height3 = Mathf.Min(height3, height1 + Terrain.I.scale);
-            bool maybeFlip = Random.value > .5f;
-            if (height1 > height3)
-                FlattenGround.SetNewGround(position, cliffLand,
-                    height3 - Mathf.FloorToInt((height1 - height3) / 2f),
-                    comparison.Rotate(180).ToUnitRotation(),
-                    height1 - height3,
-                    maybeFlip);
-            else if (height3 > height1)
-                FlattenGround.SetNewGround(position, cliffLand,
-                    height1 - Mathf.FloorToInt((height3 - height1) / 2f),
-                    comparison.ToUnitRotation(),
-                    height3 - height1,
-                    maybeFlip);
-            else
-                FlattenGround.SetNewGround(position, flatLand,
-                    height1,
-                    60 * Random.Range(0, 6),
-                    maybeFlip);
+    private void FlattenAxis(HexPos cur, HexPos comparison0, HexPos comparison1, HexPos comparison2, int recentTimes) {
+        if (Terrain.Grid[cur] == null) CreateNewGround(cur);
+        Terrain.Grid[cur].debugInfo = "";
+        int[] diffs = SurfaceHeight.GetSeafloorHeightDifferences(cur, cur + comparison0).Concat(
+            SurfaceHeight.GetSeafloorHeightDifferences(cur, cur + comparison1)).Concat(
+            SurfaceHeight.GetSeafloorHeightDifferences(cur, cur + comparison2)).ToArray();
+        Terrain.Grid[cur].debugInfo += "diffs " + diffs[0] + " " + diffs[1] + " " + diffs[2] + " " + diffs[3] + " " + diffs[4] + " " + diffs[5];
+        int max = Mathf.Max(diffs);
+        Terrain.Grid[cur].debugInfo += " max " + max;
+        if (max < 0) {
+            Terrain.Grid[cur].debugInfo += " all " + Mathf.Min(-max, 2 + recentTimes * 2);
+            if (Terrain.Grid[cur] == null) CreateNewGround(cur);
+            SurfaceHeight.RaiseColumn(cur, Mathf.Min(-max, 2 + recentTimes * 2), null);
         }
+        if (Mathf.Min(diffs) < 0) {
+            max = Mathf.Min(max, 0);
+            int[] cornersToRaise = new int[] {0, 0, 0, 0, 0, 0};
+            if (diffs[0] < max) cornersToRaise[comparison0.UnitCorners[0]] = Mathf.Min(2, max - diffs[0]);
+            if (diffs[1] < max || diffs[2] < max) cornersToRaise[comparison0.UnitCorners[1]] = Mathf.Min(2, max - Mathf.Min(diffs[1], diffs[2]));
+            if (diffs[3] < max || diffs[4] < max) cornersToRaise[comparison1.UnitCorners[1]] = Mathf.Min(2, max - Mathf.Min(diffs[3], diffs[4]));
+            if (diffs[5] < max) cornersToRaise[comparison2.UnitCorners[1]] = Mathf.Min(2, max - diffs[5]);
+            Terrain.Grid[cur].debugInfo += " corners " + cornersToRaise[0] + " " + cornersToRaise[1] + " " + cornersToRaise[2] + " " + cornersToRaise[3] + " " + cornersToRaise[4] + " " + cornersToRaise[5];
+            RaiseCorners(cur, cornersToRaise, true);
+        }
+    }
+
+    public void RaiseCorner(HexPos position, int corner, int quantity, bool raiseFloorToClamp) {
+        if (Terrain.Grid[position] == null) CreateNewGround(position);
+        SurfaceHeight.RaiseCorner(position, corner, quantity, raiseFloorToClamp);
+    }
+
+    public void RaiseCorners(HexPos position, int[] quantities, bool raiseFloorToClamp) {
+        if (Terrain.Grid[position] == null) CreateNewGround(position);
+        SurfaceHeight.RaiseCorners(position, quantities, raiseFloorToClamp);
     }
 }

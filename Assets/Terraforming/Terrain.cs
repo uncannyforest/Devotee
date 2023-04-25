@@ -16,11 +16,13 @@ public class Terrain : MonoBehaviour {
         new HexPos(1, 0)
     };
     public Column columnPrefab;
+    public MeshGenerator surfaceMesh;
     public GameObject[] randomSurface;
     public GameObject[] randomUnderground;
 
     public HexGrid<Column> grid = new HexGrid<Column>();
     public static HexGrid<Column> Grid { get => instance.grid; }
+    public static int Scale { get => instance.scale; }
 
     public int maxHeight = 0;
 
@@ -34,7 +36,7 @@ public class Terrain : MonoBehaviour {
     }
 
     public Transform GetClosestLandPiece(Vector3 worldPosition) {
-        HexPos pos = HexPos.FromWorldCoord(worldPosition / scale);
+        HexPos pos = HexPos.FromWorld(worldPosition);
         return grid[pos].Surface;
     }
 

@@ -18,7 +18,7 @@ public class CollectibleSpawnManager : MonoBehaviour {
     void Start() {
         interaction = GameObject.FindObjectOfType<Interaction>();
         collected = new bool[collectibles.Length];
-        collected[0] = true;
+        collected[FindObjectOfType<Interaction>().transform.GetChild(0).GetChild(0).GetComponent<Collectible>().id] = true;
         collectiblesInWorld = new List<HashSet<Collectible>>();
         for (int i = 0; i < collectibles.Length; i++)
             collectiblesInWorld.Add(new HashSet<Collectible>());

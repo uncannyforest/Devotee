@@ -14,12 +14,7 @@ public class Terraformer : MonoBehaviour {
     public HexPos Position {
         get => selector.Position;
         private set {
-            interaction.WillUpdatePos(value);
-            selector.Position = value;
-            if (Terrain.I.CanModTerrain(value))
-                selector.Color = selectorReady;
-            else
-                selector.Color = selectorInvalid;
+            interaction.UpdatePos(value);
         }
     }
 

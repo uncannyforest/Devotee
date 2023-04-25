@@ -5,6 +5,8 @@ using UnityEngine;
 
 /// <summary> holds code governing interaction with other game objects </summary>
 public class EnvironmentInteractor {
+    public bool readyToDrop = false;
+
     private HoldObject script;
     private Transform playerHoldTransform;
     private HashSet<GameObject> nearObjects = new HashSet<GameObject>();
@@ -52,8 +54,11 @@ public class EnvironmentInteractor {
 
     public void DropHeldObject() {
         foreach (Transform child in playerHoldTransform) {
-            Holdable childPickMeUp = child.GetComponent<Holdable>();
-            childPickMeUp.Drop();
+            if (readyToDrop) {
+                CollectibleSpawnManager.I.Collect(child.GetComponent<Collectible>());
+            } else {
+                child.GetComponent<Holdable>().Drop();
+            }
         }
     }
 

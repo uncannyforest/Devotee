@@ -34,13 +34,17 @@ public class HoldObject : MonoBehaviour
     void OnTriggerEnter(Collider other) {
         if(other.tag == "CanPickUp") {
             environmentInteractor.AddInteractableObject(other.gameObject);
+        } else if(other.tag == "DropZone") {
+            environmentInteractor.readyToDrop = true;
         }
     }
 
 	void OnTriggerExit(Collider other) {
         if(other.tag == "CanPickUp") {
             environmentInteractor.RemoveInteractableObject(other.gameObject);
-		}
+		} else if(other.tag == "DropZone") {
+            environmentInteractor.readyToDrop = false;
+        }
     }
 
     /// <summary> Called by Holdable script once hold initiated </summary>

@@ -63,6 +63,7 @@ public class Holdable : MonoBehaviour {
         oldPosition = this.transform.position;
         this.transform.rotation = playerHoldTransform.rotation;
         playerHoldTransform.parent.GetComponent<HoldObject>().OnHoldObject(gameObject);
+        GetComponent<Collectible>().Hold();
     }
 
     public float GetColliderWidth() {

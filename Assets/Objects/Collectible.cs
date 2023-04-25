@@ -11,10 +11,7 @@ public class Collectible : MonoBehaviour {
         transform.Rotate(Vector3.up, Time.deltaTime * speed);
     }
 
-    void OnTriggerEnter(Collider collider) {
-        // if (collider.gameObject.tag == "Player") {
-        //     collectibleSpawn.collected = true;
-        //     CollectibleSpawnManager.I.Collect(this);
-        // }
+    public void Hold() {
+        collectibleSpawn.collected = true;
     }
 }

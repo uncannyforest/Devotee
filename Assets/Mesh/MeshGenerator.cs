@@ -110,6 +110,7 @@ public class MeshGenerator : MonoBehaviour {
         float middle = verts[0].y;
 
         if (!HasGap(i, middle)) {
+            verts.Add(Rot(i) * new Vector3(0, corners[i] / scale, .75f)); // step      c - 3
             verts.Add(Rot(i) * new Vector3(0, corners[i] / scale, 1)); // outer rim c - 2
             verts.Add(Rot(i) * new Vector3(0, corners[i] / scale, 1)); // outer rim c - 1
             MarkVertex(verts, upNormals);
@@ -137,7 +138,9 @@ public class MeshGenerator : MonoBehaviour {
         if (!gap0 && !gap1) {
             tris.AddRange(new int[] {c0, c0 - 1, c1}); // outer face
             tris.AddRange(new int[] {c1, c0 - 1, c1 - 1}); // outer face
-            tris.AddRange(new int[] {c1 - 2, c0 - 2, 0}); // top
+            tris.AddRange(new int[] {c1 - 2, c0 - 2, c1 - 3}); // step
+            tris.AddRange(new int[] {c1 - 3, c0 - 2, c0 - 3}); // step
+            tris.AddRange(new int[] {c1 - 3, c0 - 3, 0}); // middle
         } else if (gap0 && gap1) {
             verts.Add(Rot(i0 + .5f) * new Vector3(0, (corners[i0] + corners[i1]) / 2f / scale, SQRT3_4)); // last + 1
             verts.Add(Rot(i0 + .5f) * new Vector3(0, (corners[i0] + corners[i1]) / 2f / scale, SQRT3_4)); // last + 2
@@ -166,7 +169,8 @@ public class MeshGenerator : MonoBehaviour {
             tris.AddRange(Tri(gap0, c3, c2 - 1, c3 - 1)); // outer face
             tris.AddRange(Tri(gap0, c3 - 2, pinwheel, c3 - 3)); // gap top
             tris.AddRange(Tri(gap0, c2 - 2, pinwheel, c3 - 2)); // outer top
-            tris.AddRange(Tri(gap0, 0, pinwheel, c2 - 2)); // nongap to middle
+            tris.AddRange(Tri(gap0, c2 - 3, pinwheel, c2 - 2)); // step
+            tris.AddRange(Tri(gap0, 0, pinwheel, c2 - 3)); // nongap step to middle
             tris.AddRange(Tri(gap0, c3 - 6, pinwheel, 0)); // middle transition
             tris.AddRange(Tri(gap0, c3 - 4, last + 2, c3 - 5)); // inner facade
         } else {
@@ -190,8 +194,8 @@ public class MeshGenerator : MonoBehaviour {
             MarkVertex(verts, upNormals);
             tris.AddRange(Tri(gap0, c2 - 1, last + 10, c2)); // outer face
             tris.AddRange(Tri(gap0, c2, last + 10, c3)); // outer face
-            tris.AddRange(Tri(gap0, c3, last + 10, c3 - 1)); // outer face
-            tris.AddRange(Tri(gap0, c3 - 1, last + 10, last + 1)); // outer face
+            tris.AddRange(Tri(gap0, last + 1, c3, last + 10)); // outer face
+            tris.AddRange(Tri(gap0, c3 - 1, c3, last + 1)); // outer face
             tris.AddRange(Tri(gap0, last + 2, last + 4, c3 - 2)); // gap top
             tris.AddRange(Tri(gap0, c3 - 2, last + 4, c3 - 3)); // gap top
             tris.AddRange(Tri(gap0, last + 9, pinwheelInner, last + 3)); // facade end
@@ -199,8 +203,9 @@ public class MeshGenerator : MonoBehaviour {
             tris.AddRange(Tri(gap0, last + 5, pinwheelInner, c3 - 4)); // inner facade
             tris.AddRange(Tri(gap0, c3 - 4, pinwheelInner, c3 - 5)); // inner facade
             tris.AddRange(Tri(gap0, c3 - 6, pinwheelBase, 0)); // middle
-            tris.AddRange(Tri(gap0, 0, pinwheelBase, c2 - 2)); // nongap to middle
-            tris.AddRange(Tri(gap0, c2 - 2, pinwheelBase, last + 8)); // outer top
+            tris.AddRange(Tri(gap0, 0, pinwheelBase, c2 - 3)); // nongap to middle
+            tris.AddRange(Tri(gap0, c2 - 3, pinwheelBase, last + 8)); // outer top
+            tris.AddRange(Tri(gap0, last + 8, c2 - 2, c2 - 3)); // step
         }
     }
 

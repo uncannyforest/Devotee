@@ -6,6 +6,10 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour {
+    public float minHeightForSecretPassage = 14.99f;
+    public float secretPassageInnerHeight = .2f;
+    public float secretPassageOuterHeight = .4f;
+    public float secretPassageOuterWidth = 1/6f;
     public int[] corners = {1, 1, 1, 1, 1, 1};
 
     private Mesh mesh;
@@ -15,6 +19,7 @@ public class MeshGenerator : MonoBehaviour {
 
     private float scale;
     private static float SQRT3_4 = Mathf.Sqrt(3) / 4;
+    private static float SQRT_1_3_4 = Mathf.Sqrt(1/3f) / 4;
     private float rampPermitted;
 
     public Corners Corners { get => new Corners(corners); }
@@ -135,17 +140,62 @@ public class MeshGenerator : MonoBehaviour {
         int last = verts.Count - 1;
         bool gap1 = HasGap(i1, middle);
 
+        bool secretPassage = gap0 && gap1
+            && corners[i0] - middle * scale >= minHeightForSecretPassage
+            && corners[i1] - middle * scale >= minHeightForSecretPassage;
+
         if (!gap0 && !gap1) {
             tris.AddRange(new int[] {c0, c0 - 1, c1}); // outer face
             tris.AddRange(new int[] {c1, c0 - 1, c1 - 1}); // outer face
             tris.AddRange(new int[] {c1 - 2, c0 - 2, c1 - 3}); // step
             tris.AddRange(new int[] {c1 - 3, c0 - 2, c0 - 3}); // step
             tris.AddRange(new int[] {c1 - 3, c0 - 3, 0}); // middle
+        } else if (secretPassage) { 
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, (corners[i0] + corners[i1]) / 2f / scale, SQRT3_4)); // last + 1
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, (corners[i0] + corners[i1]) / 2f / scale, SQRT3_4)); // last + 2
+            // odds are wall, evens are ground and passage walls
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle + secretPassageInnerHeight, SQRT3_4)); // last + 3
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle + secretPassageInnerHeight, SQRT3_4)); // last + 4
+            verts.Add(Rot(i0) * new Vector3(-SQRT_1_3_4, middle, .375f)); // last + 5
+            verts.Add(Rot(i0) * new Vector3(-SQRT_1_3_4, middle, .375f)); // last + 6
+            verts.Add(Rot(i1) * new Vector3(SQRT_1_3_4, middle, .375f)); // last + 7
+            verts.Add(Rot(i1) * new Vector3(SQRT_1_3_4, middle, .375f)); // last + 8
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle + secretPassageOuterHeight, SQRT3_4 * 2)); // last + 9
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle + secretPassageOuterHeight, SQRT3_4 * 2)); // last + 10
+            verts.Add(Rot(i0 + .5f) * new Vector3(secretPassageOuterWidth, middle, SQRT3_4 * 2)); // last + 11
+            verts.Add(Rot(i0 + .5f) * new Vector3(secretPassageOuterWidth, middle, SQRT3_4 * 2)); // last + 12
+            verts.Add(Rot(i0 + .5f) * new Vector3(-secretPassageOuterWidth, middle, SQRT3_4 * 2)); // last + 13
+            verts.Add(Rot(i0 + .5f) * new Vector3(-secretPassageOuterWidth, middle, SQRT3_4 * 2)); // last + 14
+            tris.AddRange(new int[] {c0, last + 11, c1}); // 7 outer faces
+            tris.AddRange(new int[] {c1, last + 11, last + 13});
+            tris.AddRange(new int[] {c0, c0 - 1, last + 11});
+            tris.AddRange(new int[] {last + 11, c0 - 1, last + 9});
+            tris.AddRange(new int[] {c1 - 1, c1, last + 13});
+            tris.AddRange(new int[] {last + 13, last + 9, c1 - 1});
+            tris.AddRange(new int[] {c1 - 1, last + 9, c0 - 1});
+            tris.AddRange(new int[] {c0 - 2, c0 - 3, last + 1}); // top
+            tris.AddRange(new int[] {last + 1, c1 - 2, c0 - 2}); // top
+            tris.AddRange(new int[] {c1 - 2, last + 1, c1 - 3}); // top
+            tris.AddRange(new int[] {last + 2, c0 - 4, last + 3}); // inner facade
+            tris.AddRange(new int[] {last + 3, c0 - 4, last + 5}); // inner facade
+            tris.AddRange(new int[] {last + 5, c0 - 4, c0 - 5}); // inner facade
+            tris.AddRange(new int[] {c1 - 5, c1 - 4, last + 7}); // inner facade
+            tris.AddRange(new int[] {last + 7, c1 - 4, last + 3}); // inner facade
+            tris.AddRange(new int[] {last + 3, c1 - 4, last + 2}); // inner facade
+            tris.AddRange(new int[] {c0 - 6, 0, last + 6}); // middle
+            tris.AddRange(new int[] {last + 6, 0, last + 8}); // middle
+            tris.AddRange(new int[] {last + 8, 0, c1 - 6}); // middle
+            tris.AddRange(new int[] {last + 6, last + 8, last + 12}); // passage floor
+            tris.AddRange(new int[] {last + 12, last + 8, last + 14}); // passage floor
+            tris.AddRange(new int[] {last + 6, last + 12, last + 4}); // passage walls
+            tris.AddRange(new int[] {last + 4, last + 12, last + 10}); // passage walls
+            tris.AddRange(new int[] {last + 10, last + 14, last + 4}); // passage walls
+            tris.AddRange(new int[] {last + 4, last + 14, last + 8}); // passage walls
         } else if (gap0 && gap1) {
             verts.Add(Rot(i0 + .5f) * new Vector3(0, (corners[i0] + corners[i1]) / 2f / scale, SQRT3_4)); // last + 1
             verts.Add(Rot(i0 + .5f) * new Vector3(0, (corners[i0] + corners[i1]) / 2f / scale, SQRT3_4)); // last + 2
-            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle, SQRT3_4));                                   // last + 3
-            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle, SQRT3_4));                                   // last + 4
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle, SQRT3_4));                                // last + 3
+            verts.Add(Rot(i0 + .5f) * new Vector3(0, middle, SQRT3_4));                                // last + 4
             tris.AddRange(new int[] {c0, c0 - 1, c1}); // outer face
             tris.AddRange(new int[] {c1, c0 - 1, c1 - 1}); // outer face
             tris.AddRange(new int[] {c0 - 2, c0 - 3, last + 1}); // top

@@ -55,7 +55,7 @@ public class EnvironmentInteractor {
     public void DropHeldObject() {
         foreach (Transform child in playerHoldTransform) {
             if (readyToDrop) {
-                CollectibleSpawnManager.I.Collect(child.GetComponent<Collectible>());
+                script.StartCoroutine(GameObject.FindObjectOfType<Altar>().Collect(child));
             } else {
                 child.GetComponent<Holdable>().Drop();
             }
@@ -68,5 +68,4 @@ public class EnvironmentInteractor {
             childPickMeUp.Drop();
         }
     }
-
 }

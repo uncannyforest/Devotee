@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class Holdable : MonoBehaviour {
     public float holdWidth;
     public float pickUpTime = 0.5f;
+    public float collectRate = 1f;
 
     private float heldState = 0.0f; // 0 if not held, 1 if held
     private Transform playerHoldTransform;
@@ -73,6 +74,5 @@ public class Holdable : MonoBehaviour {
     private float QuadInterpolate(float x) {
         return -x * (x - 2);
     }
-
 }
 

@@ -67,16 +67,6 @@ public class SurfaceHeight {
         return new int[] {diff1, diff2};
     }
 
-    // public static void SetHeights(HexPos position, int[] heights) {
-    //     Corners corners = new Corners(heights);
-    //     int diff = corners.Normalize();
-    //     Column column = Terrain.Grid[position];
-    //     if (column != null) {
-    //         column.Surface.GetComponent<MeshGenerator>().corners
-    //         column.Move(diff);
-    //     }
-    // }
-
     public static void RaiseCorners(HexPos position, int[] quantities, bool raiseFloorToClamp) {
         if (!Terrain.I.CanModTerrain(position)) return;
         Column column = Terrain.Grid[position];

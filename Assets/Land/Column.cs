@@ -8,7 +8,7 @@ public class Column : MonoBehaviour {
     public string debugInfo;
 
     private int dyNextUpdate;
-    public int Y { get => Mathf.RoundToInt(Surface.transform.position.y) + dyNextUpdate; }
+    public int Y { get => Mathf.RoundToInt(Surface.position.y) + dyNextUpdate; }
 
     public static Column Instantiate(Data data) {
         Column column = Terrain.Grid[data.position];
@@ -57,17 +57,6 @@ public class Column : MonoBehaviour {
         return surface.transform;
     }
 
-    public Transform InstantiateSurface
-            (int surfaceId, Vector3 position, float yRot, int height, int zOrientation) {
-        Transform result = GameObject.Instantiate(
-                Terrain.I.randomSurface[surfaceId],
-                position,
-                Quaternion.Euler(0, yRot, 0),
-                transform).transform;
-        result.localScale = new Vector3(Terrain.I.scale, height, Terrain.I.scale * zOrientation);
-        return result;
-    }
-
     public Transform InstantiateUnderground
             (int undergroundId, Vector3 position, float yRot,
              float zRot, int zOrientation, float? randomSeed) {
@@ -91,18 +80,18 @@ public class Column : MonoBehaviour {
         InstantiateUnderground(data.undergroundId, data.position, data.yRot,
             data.zRot, data.zOrientation, data.randomSeed);
 
-    public int[] Heights { get => Surface.GetComponent<MeshGenerator>().Corners.heightsWithBase(Y); }
+    public int[] Heights { get => Surface.Corners.heightsWithBase(Y); }
     public int MaxHeight { get => Mathf.Max(Surface.GetComponent<MeshGenerator>().Corners) + Y; }
-    public Transform Surface { get => transform.GetChild(0); }
+    public MeshGenerator Surface { get => transform.GetChild(0).GetComponent<MeshGenerator>(); }
     public Transform DeepestUnderground { get => transform.GetChild(transform.childCount - 1); }
     public bool HasUnderground { get => transform.childCount > 1; }
     public int UndergroundCount { get => transform.childCount - 1; }
 
     public int GetHeight(int corner) {
-        return Surface.GetComponent<MeshGenerator>().corners[corner] + Y;
+        return Surface.corners[corner] + Y;
     }
     public void SetHeights(int[] heights, bool raiseFloorToClamp) {
-        int height = Surface.GetComponent<MeshGenerator>().SetCornersClampReturningDiff(heights, raiseFloorToClamp);
+        int height = Surface.SetCornersClampReturningDiff(heights, raiseFloorToClamp);
         debugInfo += "SetHeights " + heights[0] + " " + heights[1] + " " + heights[2] + " " + heights[3] + " " + heights[4] + " " + heights[5] + " height " + height + " Y " + Y;
         Move(height - Y);
     }
@@ -125,9 +114,8 @@ public class Column : MonoBehaviour {
             this.corners = corners;
         }
 
-        public static SurfaceData From(Transform t) {
-            MeshGenerator land = t.GetComponent<MeshGenerator>();
-            return new SurfaceData(land.corners);
+        public static SurfaceData From(MeshGenerator t) {
+            return new SurfaceData(t.corners);
         }
     }
 

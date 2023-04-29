@@ -23,6 +23,7 @@ public class MeshGenerator : MonoBehaviour {
     private float rampPermitted;
 
     public Corners Corners { get => new Corners(corners); }
+    public Vector3 position { get => transform.position; }
 
     void Start() {
         UpdateMesh();

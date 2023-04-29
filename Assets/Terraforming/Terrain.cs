@@ -17,7 +17,6 @@ public class Terrain : MonoBehaviour {
     };
     public Column columnPrefab;
     public MeshGenerator surfaceMesh;
-    public GameObject[] randomSurface;
     public GameObject[] randomUnderground;
 
     public HexGrid<Column> grid = new HexGrid<Column>();
@@ -33,11 +32,6 @@ public class Terrain : MonoBehaviour {
 
     public bool CanModTerrain(HexPos pos) {
         return !originPositions.Contains(pos);
-    }
-
-    public Transform GetClosestLandPiece(Vector3 worldPosition) {
-        HexPos pos = HexPos.FromWorld(worldPosition);
-        return grid[pos].Surface;
     }
 
     public void PopulateTerrainFromData(Column.Data[] land) {

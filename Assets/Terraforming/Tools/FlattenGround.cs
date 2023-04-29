@@ -16,14 +16,6 @@ public class FlattenGround : Tool {
         selector.Position = selector.Position;
     }
 
-    // public static int GetHeight(HexPos position, HexPos adjacentPosition) {
-    //     Column column = Terrain.Grid[position];
-    //     if (column == null) return 0;
-    //     int level = Mathf.FloorToInt(column.Surface
-    //         .GetComponent<EdgeLevels>().GetLevel(adjacentPosition - position));
-    //     return level > 0 ? level : 0;
-    // }
-
     public static int MathMid(int a, int b, int c) {
         int lower = Mathf.Min(a, b);
         int higher = Mathf.Max(a, b);
@@ -122,7 +114,7 @@ public class FlattenGround : Tool {
         if (Terrain.Grid[position] == null) {
             if (cornerHeight == 0) return;
             Column column = Column.Instantiate(position, 0, new int[] {1, 1, 1, 1, 1, 1});
-            column.Surface.GetComponent<MeshGenerator>().SetCornerReturningDiff(corner, Mathf.RoundToInt(cornerHeight + 1));
+            column.Surface.SetCornerReturningDiff(corner, Mathf.RoundToInt(cornerHeight + 1));
         } else {
             Column column = Terrain.Grid[position];
             int[] heights = column.Heights;

@@ -13,23 +13,21 @@ public class Column : MonoBehaviour {
     public static Column Instantiate(Data data) {
         Column column = Terrain.Grid[data.position];
 
-        // if (column) {
-        //     column.transform.position += data.surface.position - column.Surface.position;
-        //     for (int i = column.UndergroundCount; i < data.underground.Length; i++) {
-        //         UndergroundData underground = data.underground[i];
-        //         column.InstantiateUnderground(underground.undergroundId, underground.position,
-        //             underground.yRot, underground.zRot, underground.zOrientation, underground.randomSeed);
-        //     }
-        //     return column;
-        // }
+        if (column) {
+            column.transform.position += Vector3.up * (data.maxHeight - column.MaxHeight);
+            for (int i = column.UndergroundCount; i < data.underground.Length; i++) {
+                UndergroundData underground = data.underground[i];
+                column.InstantiateUnderground(underground.undergroundId, underground.position,
+                    underground.yRot, underground.zRot, underground.zOrientation, underground.randomSeed);
+            }
+            return column;
+        }
 
-        // column = Instantiate(data.position, data.surface.height);
-        // column.InstantiateSurface(data.surface.surfaceId, data.surface.position,
-        //     data.surface.yRot, data.surface.height, data.surface.zOrientation);
-        // foreach (UndergroundData underground in data.underground) {
-        //     column.InstantiateUnderground(underground.undergroundId, underground.position,
-        //         underground.yRot, underground.zRot, underground.zOrientation, underground.randomSeed);
-        // }
+        column = Instantiate(data.position, data.maxHeight, data.surface.corners);
+        foreach (UndergroundData underground in data.underground) {
+            column.InstantiateUnderground(underground.undergroundId, underground.position,
+                underground.yRot, underground.zRot, underground.zOrientation, underground.randomSeed);
+        }
         return column;
     }
 
@@ -70,9 +68,6 @@ public class Column : MonoBehaviour {
         return result;
     }
 
-    public Transform InstantiateSurface(SurfaceData data) =>
-        InstantiateSurface(data.surfaceId, data.position, data.yRot, data.height, data.zOrientation);
-
     public Transform InstantiateUnderground
             (int undergroundId, Vector3 position, float yRot,
              float zRot, int zOrientation, float? randomSeed) {
@@ -97,6 +92,7 @@ public class Column : MonoBehaviour {
             data.zRot, data.zOrientation, data.randomSeed);
 
     public int[] Heights { get => Surface.GetComponent<MeshGenerator>().Corners.heightsWithBase(Y); }
+    public int MaxHeight { get => Mathf.Max(Surface.GetComponent<MeshGenerator>().Corners) + Y; }
     public Transform Surface { get => transform.GetChild(0); }
     public Transform DeepestUnderground { get => transform.GetChild(transform.childCount - 1); }
     public bool HasUnderground { get => transform.childCount > 1; }
@@ -123,24 +119,15 @@ public class Column : MonoBehaviour {
     }
 
     [Serializable] public struct SurfaceData {
-        public int surfaceId;
-        public Vector3 position;
-        public float yRot;
-        public int height;
-        public int zOrientation;
+        public int[] corners;
 
-        public SurfaceData(int surfaceId, Vector3 position, float yRot, int height, int zOrientation) {
-            this.surfaceId = surfaceId;
-            this.position = position;
-            this.yRot = yRot;
-            this.height = height;
-            this.zOrientation = zOrientation;
+        public SurfaceData(int[] corners) {
+            this.corners = corners;
         }
 
         public static SurfaceData From(Transform t) {
-            Land land = t.GetComponent<Land>();
-            return new SurfaceData(land.id, t.position, t.eulerAngles.y,
-                Mathf.RoundToInt(t.lossyScale.y), t.localScale.z > 0 ? 1 : -1);
+            MeshGenerator land = t.GetComponent<MeshGenerator>();
+            return new SurfaceData(land.corners);
         }
     }
 
@@ -171,11 +158,13 @@ public class Column : MonoBehaviour {
 
     [Serializable] public struct Data {
         public HexPos position;
+        public int maxHeight;
         public SurfaceData surface;
         public UndergroundData[] underground;
 
-        public Data(HexPos position, SurfaceData surface, UndergroundData[] underground) {
+        public Data(HexPos position, int maxHeight, SurfaceData surface, UndergroundData[] underground) {
             this.position = position;
+            this.maxHeight = maxHeight;
             this.surface = surface;
             this.underground = underground;
         }
@@ -189,6 +178,7 @@ public class Column : MonoBehaviour {
 
         return new Data(
             position,
+            MaxHeight,
             SurfaceData.From(Surface),
             underground.ToArray()
         );

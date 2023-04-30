@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,20 +43,22 @@ public class FlattenGround : Tool {
     public void UpdateColor() {
         HexPos pos1 = selector.Position + HexPos.D.Rotate(corner * 60);
         HexPos pos2 = selector.Position + HexPos.E.Rotate(corner * 60);
-        if (!Terrain.I.CanModTerrain(selector.Position)
-                || !Terrain.I.CanModTerrain(pos1)
-                || !Terrain.I.CanModTerrain(pos2)) {
+        int cannotMod = (Terrain.I.CanModTerrain(selector.Position) ? 0 : 2)
+                + (Terrain.I.CanModTerrain(pos1) ? 0 : 3)
+                + (Terrain.I.CanModTerrain(pos2) ? 0 : 4);
+        if (cannotMod >= 5) {
             selector.Color = terraformer.selectorInvalid;
         } else {
-            int myCorner = SurfaceHeight.GetHeight(selector.Position, corner);
-            int corner1 = SurfaceHeight.GetHeight(pos1, (corner + 2) % 6);
-            int corner2 = SurfaceHeight.GetHeight(pos2, (corner + 4) % 6);
+            int myCorner = cannotMod == 2 ? Int32.MaxValue : SurfaceHeight.GetHeight(selector.Position, corner);
+            int corner1 = cannotMod == 3 ? Int32.MaxValue : SurfaceHeight.GetHeight(pos1, (corner + 2) % 6);
+            int corner2 = cannotMod == 4 ? Int32.MaxValue : SurfaceHeight.GetHeight(pos2, (corner + 4) % 6);
             int minHeight = Mathf.Min(myCorner, corner1, corner2);
-            int overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
-            int overheight1 = SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
-            int overheight2 = SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            int overheight0 = cannotMod == 2 || SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            int overheight1 = cannotMod == 3 || SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+            int overheight2 = cannotMod == 4 || SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
             if (overheight0 + overheight1 + overheight2 == 0) selector.Color = terraformer.selectorReady;
             else if (overheight0 + overheight1 + overheight2 == 1) selector.Color = selectorPartial;
+            else if (cannotMod > 0) selector.Color = terraformer.selectorInvalid;
             else {
                 minHeight = MathMid(myCorner, corner1, corner2);
                 overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
@@ -70,21 +73,24 @@ public class FlattenGround : Tool {
     public override bool Use() {
         HexPos pos1 = selector.Position + HexPos.D.Rotate(corner * 60);
         HexPos pos2 = selector.Position + HexPos.E.Rotate(corner * 60);
-        if (!Terrain.I.CanModTerrain(selector.Position)
-            || !Terrain.I.CanModTerrain(pos1)
-            || !Terrain.I.CanModTerrain(pos2)) return false;
-        int myCorner = SurfaceHeight.GetHeight(selector.Position, corner);
-        int corner1 = SurfaceHeight.GetHeight(pos1, (corner + 2) % 6);
-        int corner2 = SurfaceHeight.GetHeight(pos2, (corner + 4) % 6);
+        int cannotMod = (Terrain.I.CanModTerrain(selector.Position) ? 0 : 2)
+                + (Terrain.I.CanModTerrain(pos1) ? 0 : 3)
+                + (Terrain.I.CanModTerrain(pos2) ? 0 : 4);
+        if (cannotMod >= 5) return false;
+        int myCorner = cannotMod == 2 ? Int32.MaxValue : SurfaceHeight.GetHeight(selector.Position, corner);
+        int corner1 = cannotMod == 3 ? Int32.MaxValue : SurfaceHeight.GetHeight(pos1, (corner + 2) % 6);
+        int corner2 = cannotMod == 4 ? Int32.MaxValue : SurfaceHeight.GetHeight(pos2, (corner + 4) % 6);
         int minHeight = Mathf.Min(myCorner, corner1, corner2);
         bool modCorner0, modCorner1, modCorner2;
-        int overheight0 = SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
-        int overheight1 = SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
-        int overheight2 = SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+        int overheight0 = cannotMod == 2 || SurfaceHeight.GetMaxHeightExcept(selector.Position, corner) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+        int overheight1 = cannotMod == 3 || SurfaceHeight.GetMaxHeightExcept(pos1, (corner + 2) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
+        int overheight2 = cannotMod == 4 || SurfaceHeight.GetMaxHeightExcept(pos2, (corner + 4) % 6) >= minHeight + Terrain.I.scale * 2 ? 1 : 0;
         if (overheight0 + overheight1 + overheight2 <= 1) {
             modCorner0 = overheight0 == 0;
             modCorner1 = overheight1 == 0;
             modCorner2 = overheight2 == 0;
+        } else if (cannotMod > 0) {
+            return false;
         } else {
             modCorner0 = overheight0 != 0;
             modCorner1 = overheight1 != 0;

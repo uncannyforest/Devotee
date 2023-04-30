@@ -25,13 +25,20 @@ public class Terrain : MonoBehaviour {
 
     public int maxHeight = 0;
 
+    private Transform player;
+
     public void Awake() {
         grid[new HexPos(0, 0)] = transform.GetChild(0).GetComponent<Column>();
         grid[new HexPos(1, 0)] = transform.GetChild(1).GetComponent<Column>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    public bool CanRaiseTerrain(HexPos pos) {
+        return !originPositions.Contains(pos);
     }
 
     public bool CanModTerrain(HexPos pos) {
-        return !originPositions.Contains(pos);
+        return CanRaiseTerrain(pos) && HexPos.FromWorld(player.position) != pos;
     }
 
     public void PopulateTerrainFromData(Column.Data[] land) {

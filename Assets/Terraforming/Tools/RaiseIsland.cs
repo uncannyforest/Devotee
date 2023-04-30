@@ -21,9 +21,15 @@ public class RaiseIsland : Tool {
         for (int i = 0; i < 6; i++) axes[i] += Dir(i);
     }
 
-    public static void CreateNewGround(HexPos position) {
+    public void CreateNewGround(HexPos position) {
         if (!Terrain.I.CanModTerrain(position) || Terrain.Grid[position] != null) return;
         Column column = Column.Instantiate(position, 0, SurfaceHeight.MoreRandomSurface());
+    }
+
+    public override void UpdatePos(HexPos pos) {
+        selector.Position = pos;
+        if (Terrain.I.CanRaiseTerrain(pos)) selector.Color = terraformer.selectorReady;
+        else selector.Color = terraformer.selectorInvalid;
     }
 
     override public bool Use() {
@@ -40,7 +46,7 @@ public class RaiseIsland : Tool {
             int[] diffs = SurfaceHeight.GetSeafloorHeightDifferences(axis, Position);
             int max = Mathf.Max(diffs);
             if (max < 0)
-                 SurfaceHeight.RaiseColumn(axis, Mathf.Min(-max, 2), null);
+                 SurfaceHeight.RaiseColumnUnlessOccupied(axis, Mathf.Min(-max, 2), null);
             if (Mathf.Min(diffs) < 0) {
                 for (int d = 0; d < 2; d++) {
                     if (diffs[d] < max) SurfaceHeight.RaiseCorner(axis, (Position - axis).UnitCorners[d], 1, true);
@@ -82,7 +88,7 @@ public class RaiseIsland : Tool {
             if (max < 0) {
                 Terrain.Grid[cur].debugInfo += " all " + Mathf.Min(-max, 1 + times * 2);
                 if (Terrain.Grid[cur] == null) CreateNewGround(cur);
-                SurfaceHeight.RaiseColumn(cur, Mathf.Min(-max, 1 + times * 2), null);
+                SurfaceHeight.RaiseColumnUnlessOccupied(cur, Mathf.Min(-max, 1 + times * 2), null);
                 changed = true;
             }
             if (Mathf.Min(diffs) < 0) {
@@ -120,7 +126,7 @@ public class RaiseIsland : Tool {
         if (max < 0) {
             Terrain.Grid[cur].debugInfo += " all " + Mathf.Min(-max, 2 + recentTimes * 2);
             if (Terrain.Grid[cur] == null) CreateNewGround(cur);
-            SurfaceHeight.RaiseColumn(cur, Mathf.Min(-max, 2 + recentTimes * 2), null);
+            SurfaceHeight.RaiseColumnUnlessOccupied(cur, Mathf.Min(-max, 2 + recentTimes * 2), null);
         }
         if (Mathf.Min(diffs) < 0) {
             max = Mathf.Min(max, 0);

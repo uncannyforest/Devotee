@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class Tool : MonoBehaviour {
     protected Selector selector;
     protected Terraformer terraformer;
+    protected Transform player;
     protected HexPos Position {
         get => selector.Position;
     }
@@ -11,6 +12,7 @@ public abstract class Tool : MonoBehaviour {
     void Start() {
         selector = GameObject.FindObjectOfType<Selector>();
         terraformer = GameObject.FindObjectOfType<Terraformer>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     public virtual void UpdatePos(HexPos pos) {

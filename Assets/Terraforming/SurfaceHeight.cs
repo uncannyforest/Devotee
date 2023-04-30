@@ -83,8 +83,13 @@ public class SurfaceHeight {
         column.SetHeights(corners, raiseFloorToClamp);
     }
 
-    public static int RaiseColumn(HexPos position, int quantity, int? groundId) {
+    public static int RaiseColumnUnlessOccupied(HexPos position, int quantity, int? groundId) {
         if (!Terrain.I.CanModTerrain(position)) return 0;
+        return RaiseColumn(position, quantity, groundId);
+    }
+
+    public static int RaiseColumn(HexPos position, int quantity, int? groundId) {
+        if (!Terrain.I.CanRaiseTerrain(position)) return 0;
         int yPos = RaiseColumnDangerous(position, quantity, groundId);
         MaybeRaiseOrigin(yPos);
         return yPos;

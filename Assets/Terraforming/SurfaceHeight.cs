@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 // YOUR HOME FOR ALL THINGS RELATING TO SURFACE HEIGHT.
 // THEY'RE ALL HERE.  IN THIS FILE
@@ -90,6 +90,10 @@ public class SurfaceHeight {
 
     public static int RaiseColumn(HexPos position, int quantity, int? groundId) {
         if (!Terrain.I.CanRaiseTerrain(position)) return 0;
+        Transform player = Terrain.I.ContainsPlayer(position);
+        if (player != null) {
+            player.position += (quantity + .25f) * Vector3.up;
+        }
         int yPos = RaiseColumnDangerous(position, quantity, groundId);
         MaybeRaiseOrigin(yPos);
         return yPos;
@@ -99,6 +103,10 @@ public class SurfaceHeight {
         if (yPos > Terrain.I.maxHeight) {
             for (int i = 0; i < Terrain.I.originPositions.Length; i++) {
                 HexPos origin = Terrain.I.originPositions[i];
+                Transform player = Terrain.I.ContainsPlayer(Terrain.I.originPositions[i]);
+                if (player != null) {
+                    player.position += (yPos - Terrain.I.maxHeight + .25f) * Vector3.up;
+                }
                 RaiseColumnDangerous(origin, yPos - Terrain.I.maxHeight, i);
             }
             Terrain.I.maxHeight = yPos;

@@ -37,8 +37,12 @@ public class Terrain : MonoBehaviour {
         return !originPositions.Contains(pos);
     }
 
+    public Transform ContainsPlayer(HexPos pos) {
+        return HexPos.FromWorld(player.position) == pos ? player : null;
+    }
+
     public bool CanModTerrain(HexPos pos) {
-        return CanRaiseTerrain(pos) && HexPos.FromWorld(player.position) != pos;
+        return CanRaiseTerrain(pos) && ContainsPlayer(pos) != null;
     }
 
     public void PopulateTerrainFromData(Column.Data[] land) {

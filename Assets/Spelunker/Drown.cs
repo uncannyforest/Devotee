@@ -9,6 +9,7 @@ public class Drown : MonoBehaviour {
     public Vector3 ikMax = new Vector3(.5f, .5f, 1f);
     public float scarfForce = 20;
     public bool isDrowning = false;
+    public GameObject splash;
 
     public bool IsDrowning {
         set {
@@ -17,9 +18,11 @@ public class Drown : MonoBehaviour {
             scarf.externalAcceleration = Vector3.up * (isDrowning ? scarfForce : 0);
             if (isDrowning) {
                 control.ProhibitMove("drowning");
+                splash.SetActive(true);
                 StartCoroutine(LifeDrain());
             } else {
                 control.AllowMove("drowning");
+                splash.SetActive(false);
                 StopAllCoroutines();
             }
         }

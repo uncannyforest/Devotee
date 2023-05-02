@@ -16,7 +16,7 @@ public class Life : MonoBehaviour {
 
     public void Decrease() {
         level--;
-        GameObject.Destroy(transform.GetChild(0));
+        GameObject.Destroy(transform.GetChild(0).gameObject);
     }
 
     public void Increase() {

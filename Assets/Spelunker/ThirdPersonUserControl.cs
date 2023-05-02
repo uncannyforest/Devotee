@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.Events;
@@ -8,7 +8,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
     [RequireComponent(typeof (ThirdPersonCharacter))]
     public class ThirdPersonUserControl : MonoBehaviour
     {
-        public bool readInput;
+        private HashSet<string> movementProhibitions = new HashSet<string>();
 
         private ThirdPersonCharacter m_Character; // A reference to the ThirdPersonCharacter on the object
         private Transform m_Cam;                  // A reference to the main camera in the scenes transform
@@ -21,8 +21,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             set {m_Cam = value.transform;}
         }
 
-        static public void WhoaHey() {
+        public void ProhibitMove(string cause) {
+            movementProhibitions.Add(cause);
+        }
 
+        public void AllowMove(string cause) {
+            movementProhibitions.Remove(cause);
         }
 
         private void Start()
@@ -56,7 +60,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         // Fixed update is called in sync with physics
         private void FixedUpdate()
         {
-            if (!readInput) {
+            Debug.Log(movementProhibitions.Count);
+            if (movementProhibitions.Count > 0) {
                 m_Character.Move(Vector3.zero, false);
                 return;
             }

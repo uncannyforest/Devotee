@@ -18,14 +18,14 @@ public class Mode : MonoBehaviour {
                 godMode = false;
                 characterCam.SetActive(true);
                 terraformerCam.SetActive(false);
-                character.readInput = true;
+                character.AllowMove("mode");
                 terraformer.enabled = false;
                 uiCam.cullingMask = LayerMask.GetMask("UI", "Perspective UI Only");
             } else {
                 godMode = true;
                 characterCam.SetActive(false);
                 terraformerCam.SetActive(true);
-                character.readInput = false;
+                character.ProhibitMove("mode");
                 terraformer.enabled = true;
                 uiCam.cullingMask = LayerMask.GetMask("UI", "Orthographic UI Only");
             }

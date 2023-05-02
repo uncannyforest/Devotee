@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ShowEverywhere))]
 public class Life : MonoBehaviour {
     public GameObject heart;
     public int max = 6;
 
     private int level;
+    private ShowEverywhere showEverywhere;
 
     void Start() {
+        showEverywhere = GetComponent<ShowEverywhere>();
         level = max;
         for (int i = 0; i < max; i++)
             GameObject.Instantiate(heart, transform);
@@ -17,6 +20,7 @@ public class Life : MonoBehaviour {
     public void Decrease() {
         level--;
         StartCoroutine(RemoveHeart());
+        showEverywhere.ActivateTemp();
     }
 
     private IEnumerator RemoveHeart() {

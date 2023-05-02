@@ -439,6 +439,16 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 529743522}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &600617948 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7998006003362286643, guid: 943a75a9dd3b6408ebe7051765b504dd, type: 3}
+  m_PrefabInstance: {fileID: 7998006003077532273}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &670091307 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7998006002495314085, guid: 943a75a9dd3b6408ebe7051765b504dd, type: 3}
+  m_PrefabInstance: {fileID: 7998006003077532273}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &677769793
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -750,7 +760,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 3709602395674944988}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6ce2847f90d6428a9b8eefdfc2139e6, type: 3}
   m_Name: 
@@ -1024,6 +1034,14 @@ PrefabInstance:
       propertyPath: terraformer
       value: 
       objectReference: {fileID: 1727340628}
+    - target: {fileID: 5771772930482806600, guid: 66c83eec21c014441893b698744b4356, type: 3}
+      propertyPath: characterLight
+      value: 
+      objectReference: {fileID: 600617948}
+    - target: {fileID: 5771772930482806600, guid: 66c83eec21c014441893b698744b4356, type: 3}
+      propertyPath: terraformerLight
+      value: 
+      objectReference: {fileID: 670091307}
     - target: {fileID: 5771772930482806601, guid: 66c83eec21c014441893b698744b4356, type: 3}
       propertyPath: m_Name
       value: CameraMux
@@ -1081,6 +1099,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7998006002495314085, guid: 943a75a9dd3b6408ebe7051765b504dd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7998006003362286643, guid: 943a75a9dd3b6408ebe7051765b504dd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7998006004193800188, guid: 943a75a9dd3b6408ebe7051765b504dd, type: 3}
       propertyPath: m_Name
       value: UI

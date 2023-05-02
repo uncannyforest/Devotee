@@ -7,7 +7,14 @@ public class Altar : MonoBehaviour {
     public float acceleration = 3f;
     public float yAcceleration = 1f;
 
+    private ShowEverywhere interaction;
+
+    void Start() {
+        interaction = FindObjectOfType<Interaction>().GetComponent<ShowEverywhere>();
+    }
+
     public IEnumerator Collect(Transform child) {
+        interaction.ActivateTemp();
         float ddy = 0;
         float dy = 0;
         float stopTime = Time.time + collectTime;

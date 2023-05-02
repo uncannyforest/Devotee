@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ShowEverywhere))]
 public class Interaction : MonoBehaviour {
     public Terraformer terraformer;
     public Camera uiCamera;
@@ -42,7 +43,7 @@ public class Interaction : MonoBehaviour {
         tool.transform.localPosition = Vector3.zero;
         tool.transform.localRotation = Quaternion.identity;
         tool.transform.localScale = Vector3.one * scale;
-        SetLayerForAllChildren(tool.transform, LayerMask.NameToLayer("Orthographic UI Only"));
+        SetLayerForAllChildren(tool.transform, LayerMask.NameToLayer("UI"));
         tool.GetComponentInChildren<Billboard>().lookCamera = uiCamera;
         tool.GetComponentInChildren<ParticleSystem>().gameObject.SetActive(false);
         SetInactiveTool(tool);

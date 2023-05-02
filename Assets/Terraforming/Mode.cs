@@ -8,6 +8,8 @@ public class Mode : MonoBehaviour {
     public Terraformer terraformer;
     public GameObject characterCam;
     public GameObject terraformerCam;
+    public GameObject characterLight;
+    public GameObject terraformerLight;
     public Camera uiCam;
 
     public bool godMode;
@@ -18,6 +20,8 @@ public class Mode : MonoBehaviour {
                 godMode = false;
                 characterCam.SetActive(true);
                 terraformerCam.SetActive(false);
+                characterLight.SetActive(true);
+                terraformerLight.SetActive(false);
                 character.AllowMove("mode");
                 terraformer.enabled = false;
                 uiCam.cullingMask = LayerMask.GetMask("UI", "Perspective UI Only");
@@ -25,6 +29,8 @@ public class Mode : MonoBehaviour {
                 godMode = true;
                 characterCam.SetActive(false);
                 terraformerCam.SetActive(true);
+                characterLight.SetActive(false);
+                terraformerLight.SetActive(true);
                 character.ProhibitMove("mode");
                 terraformer.enabled = true;
                 uiCam.cullingMask = LayerMask.GetMask("UI", "Orthographic UI Only");

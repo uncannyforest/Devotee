@@ -307,6 +307,7 @@ GameObject:
   - component: {fileID: 7998006003330175267}
   - component: {fileID: 7998006003330175264}
   - component: {fileID: 7998006003330175265}
+  - component: {fileID: 9065749986905538436}
   m_Layer: 11
   m_Name: Life
   m_TagString: Untagged
@@ -381,6 +382,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heart: {fileID: 4240662108048402855, guid: 0c2956e5fbaa648b0bb3638abaa9dbbb, type: 3}
   max: 6
+--- !u!114 &9065749986905538436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7998006003330175295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a834fb47ac324e00b90d53f29a26d85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 4
 --- !u!1 &7998006003343919960
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,6 +683,7 @@ GameObject:
   - component: {fileID: 7998006004560701785}
   - component: {fileID: 7998006004560701782}
   - component: {fileID: 7998006004560701783}
+  - component: {fileID: 2099693114323033895}
   m_Layer: 12
   m_Name: Tools
   m_TagString: Untagged
@@ -756,6 +771,19 @@ MonoBehaviour:
   scale: 80
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+--- !u!114 &2099693114323033895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7998006004560701781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a834fb47ac324e00b90d53f29a26d85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 4
 --- !u!1001 &7998006002472023693
 PrefabInstance:
   m_ObjectHideFlags: 0

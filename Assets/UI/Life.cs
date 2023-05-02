@@ -16,7 +16,15 @@ public class Life : MonoBehaviour {
 
     public void Decrease() {
         level--;
-        GameObject.Destroy(transform.GetChild(0).gameObject);
+        StartCoroutine(RemoveHeart());
+    }
+
+    private IEnumerator RemoveHeart() {
+        Transform child = transform.GetChild(transform.childCount - 1);
+        child.GetComponentInChildren<ParticleSystem>().Play();
+        child.GetChild(0).gameObject.SetActive(false);
+        yield return new WaitForSeconds(child.GetComponentInChildren<ParticleSystem>().main.startLifetime.constant);
+        GameObject.Destroy(child.gameObject);
     }
 
     public void Increase() {

@@ -92,7 +92,9 @@ MonoBehaviour:
   collectibles:
   - {fileID: 3518997996560063786, guid: 65073700f9cf046809fd9657b031261a, type: 3}
   - {fileID: 3518997996560063786, guid: 5b756b680025945ee9ff00e2ce98cba7, type: 3}
+  - {fileID: 4444968268744514178, guid: 6fcb0ad5b76454cfaa123c398d5f7c61, type: 3}
   - {fileID: 3518997996560063786, guid: 2e7c94e38ff364ec599ae466d1f3c7ee, type: 3}
+  - {fileID: 8659673856009363715, guid: be39a4d7fbe31417b8a27e559320c198, type: 3}
   - {fileID: 3518997996560063786, guid: 79c23dda0192b48519fcea6d197f3587, type: 3}
 --- !u!1 &8484800634085182448
 GameObject:

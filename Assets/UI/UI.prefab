@@ -2081,6 +2081,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6970014755125305764, guid: db0db4b88c13e4938a3b2805d7b34656, type: 3}
+      propertyPath: m_Text
+      value: press <color=white>x</color> to <color=white>pick up item</color>
+      objectReference: {fileID: 0}
+    - target: {fileID: 6970014755982478743, guid: db0db4b88c13e4938a3b2805d7b34656, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db0db4b88c13e4938a3b2805d7b34656, type: 3}
 --- !u!224 &2116159280896394800 stripped

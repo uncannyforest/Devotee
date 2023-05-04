@@ -35,7 +35,7 @@ public class HoldObject : MonoBehaviour
         if(other.tag == "CanPickUp") {
             environmentInteractor.AddInteractableObject(other.gameObject);
         } else if(other.tag == "DropZone") {
-            environmentInteractor.readyToDrop = true;
+            environmentInteractor.ReadyToDrop = true;
         }
     }
 
@@ -43,7 +43,7 @@ public class HoldObject : MonoBehaviour
         if(other.tag == "CanPickUp") {
             environmentInteractor.RemoveInteractableObject(other.gameObject);
 		} else if(other.tag == "DropZone") {
-            environmentInteractor.readyToDrop = false;
+            environmentInteractor.ReadyToDrop = false;
         }
     }
 

@@ -5,12 +5,20 @@ using UnityEngine;
 
 /// <summary> holds code governing interaction with other game objects </summary>
 public class EnvironmentInteractor {
-    public bool readyToDrop = false;
 
     private HoldObject script;
     private Transform playerHoldTransform;
     private HashSet<GameObject> nearObjects = new HashSet<GameObject>();
     private FlexibleInputDisplay input;
+    private bool readyToDrop = false;
+
+    public bool ReadyToDrop {
+        set {
+            readyToDrop = value;
+            if (value) input.SetInteractionMessage("give item");
+            else UpdateMessageForHolding();
+        }
+    }
 
     public HashSet<GameObject> NearObjects {
         get => nearObjects;
@@ -24,7 +32,7 @@ public class EnvironmentInteractor {
 
     public void AddInteractableObject(GameObject trigger) {
         nearObjects.Add(GetInteractableObject(trigger));
-        input.SetInteractionMessage("pick up");
+        input.SetInteractionMessage("pick up item");
     }
 
     public void RemoveInteractableObject(GameObject trigger) {
@@ -52,7 +60,7 @@ public class EnvironmentInteractor {
                 o => Vector3.Distance(o.transform.position, script.transform.position)
             ).First();
 
-        input.SetInteractionMessage("release");
+        input.SetInteractionMessage("release item");
         closestObject.GetComponent<Holdable>().Hold();
     }
 
@@ -67,16 +75,16 @@ public class EnvironmentInteractor {
         UpdateViewForNearbyObjects();
     }
 
-    public void NotifyHeldObjectReadyToDrop() {
-        foreach (Transform child in playerHoldTransform) {
-            Holdable childPickMeUp = child.GetComponent<Holdable>();
-            childPickMeUp.Drop();
+    public void UpdateMessageForHolding() {
+        if (script.IsHolding) {
+            input.SetInteractionMessage("release item");
+        } else {
+            UpdateViewForNearbyObjects();
         }
     }
-
     public void UpdateViewForNearbyObjects() {
         if (nearObjects.Count > 0) {
-            input.SetInteractionMessage("pick up");
+            input.SetInteractionMessage("pick up item");
         } else {
             input.SetInteractionMessage(null);
         }

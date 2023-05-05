@@ -42,11 +42,11 @@ public class Column : MonoBehaviour {
         column.position = position;
         column.gameObject.name = position.ToString();
         Terrain.Grid[position] = column;
-        column.InstantiateSurface(column.transform.position, surface);
+        column.InstantiateSurface(position, column.transform.position, surface);
         return column;
     }
 
-    public Transform InstantiateSurface(Vector3 position, int[] corners) {
+    public Transform InstantiateSurface(HexPos hexPos, Vector3 position, int[] corners) {
         MeshGenerator surface = GameObject.Instantiate<MeshGenerator>(
             Terrain.I.surfaceMesh,
             position,
@@ -54,6 +54,7 @@ public class Column : MonoBehaviour {
             transform);
         surface.corners = corners;
         surface.transform.localScale = Vector3.one * Terrain.I.scale;
+        ChangeMaterial.OnLand(surface.GetComponent<Land>(), ChangeMaterial.GetAdjacent(hexPos));
         return surface.transform;
     }
 
@@ -66,7 +67,9 @@ public class Column : MonoBehaviour {
                 Quaternion.Euler(0, yRot, zRot),
                 transform).transform;
         result.localScale = new Vector3(Terrain.I.scale, Terrain.I.scale, Terrain.I.scale * zOrientation);
-        if (randomSeed is float aRandomSeed) result.GetComponent<Land>().randomSeed = aRandomSeed;
+        Land land = result.GetComponent<Land>();
+        if (randomSeed is float aRandomSeed) land.randomSeed = aRandomSeed;
+        ChangeMaterial.OnLand(land, Material);
         return result;
     }
 
@@ -82,6 +85,7 @@ public class Column : MonoBehaviour {
 
     public int[] Heights { get => Surface.Corners.heightsWithBase(Y); }
     public int MaxHeight { get => Mathf.Max(Surface.GetComponent<MeshGenerator>().Corners) + Y; }
+    public Material Material { get => Surface.GetComponent<MeshRenderer>().material; }
     public MeshGenerator Surface { get => transform.GetChild(0).GetComponent<MeshGenerator>(); }
     public Transform DeepestUnderground { get => transform.GetChild(transform.childCount - 1); }
     public bool HasUnderground { get => transform.childCount > 1; }

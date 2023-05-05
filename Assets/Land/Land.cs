@@ -5,6 +5,7 @@ using UnityEngine;
 public class Land : MonoBehaviour {
     public int id;
     public float randomSeed = -1;
+    public MeshRenderer[] ground;
 
     private float randomNext;
 

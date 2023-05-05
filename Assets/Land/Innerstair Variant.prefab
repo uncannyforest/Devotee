@@ -43,9 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be4a95993676b41a79fddb67be536b8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectible: {fileID: 490366320841724878, guid: 87b40b5198a35498aa85edf1a7577222, type: 3}
-  possibilities: []
-  triggers: []
   triggerLayerMask:
     serializedVersion: 2
     m_Bits: 0
@@ -66,6 +63,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 5
   randomSeed: -1
+  ground:
+  - {fileID: 1915449344675241490}
+  - {fileID: 1748455637022626520}
 --- !u!1001 &6584451778890474053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -155,5 +155,15 @@ GameObject:
 --- !u!4 &6695187421443245486 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
+  m_PrefabInstance: {fileID: 6584451778890474053}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1915449344675241490 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4752888626103974999, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
+  m_PrefabInstance: {fileID: 6584451778890474053}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1748455637022626520 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4837832619082641565, guid: b09ea005f0af34968ac4d90e4ed5723d, type: 3}
   m_PrefabInstance: {fileID: 6584451778890474053}
   m_PrefabAsset: {fileID: 0}

@@ -55,6 +55,12 @@ public class Interaction : MonoBehaviour {
         if (Input.GetKeyDown("2")) CurrentTool = 1;
         if (Input.GetKeyDown("3")) CurrentTool = 2;
         if (Input.GetKeyDown("4")) CurrentTool = 3;
+        if (Input.GetKeyDown("5")) CurrentTool = 4;
+        if (Input.GetKeyDown("6")) CurrentTool = 5;
+        if (Input.GetKeyDown("7")) CurrentTool = 6;
+        if (Input.GetKeyDown("8")) CurrentTool = 7;
+        if (Input.GetKeyDown("9")) CurrentTool = 8;
+        if (Input.GetKeyDown("0")) CurrentTool = 9;
     }
 
     public void UpdatePos(HexPos pos) {

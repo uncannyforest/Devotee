@@ -60,7 +60,6 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         // Fixed update is called in sync with physics
         private void FixedUpdate()
         {
-            Debug.Log(movementProhibitions.Count);
             if (movementProhibitions.Count > 0) {
                 m_Character.Move(Vector3.zero, false);
                 return;

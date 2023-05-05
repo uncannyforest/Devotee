@@ -18,6 +18,7 @@ public class Terrain : MonoBehaviour {
     public Column columnPrefab;
     public MeshGenerator surfaceMesh;
     public GameObject[] randomUnderground;
+    public Material defaultMaterial;
 
     public HexGrid<Column> grid = new HexGrid<Column>();
     public static HexGrid<Column> Grid { get => instance.grid; }
@@ -42,7 +43,7 @@ public class Terrain : MonoBehaviour {
     }
 
     public bool CanModTerrain(HexPos pos) {
-        return CanRaiseTerrain(pos) && ContainsPlayer(pos) != null;
+        return CanRaiseTerrain(pos) && (ContainsPlayer(pos) == null);
     }
 
     public void PopulateTerrainFromData(Column.Data[] land) {

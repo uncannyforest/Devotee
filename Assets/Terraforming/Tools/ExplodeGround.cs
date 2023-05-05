@@ -15,7 +15,7 @@ public class ExplodeGround : Tool {
         if (column.transform.childCount >= 2) GameObject.Destroy(column.transform.GetChild(1).gameObject);
         GameObject.Destroy(column.Surface.gameObject);
 
-        Transform surface = column.InstantiateSurface(initialPosition, SurfaceHeight.RandomSurface());
+        Transform surface = column.InstantiateSurface(Position, initialPosition, SurfaceHeight.RandomSurface());
         surface.SetAsFirstSibling();
 
         return true;

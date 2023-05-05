@@ -64,6 +64,7 @@ MonoBehaviour:
   - {fileID: 6314545650456960788, guid: ad6a90ab33fbc477cbe3ad85c45e51db, type: 3}
   - {fileID: 6192077346014210054, guid: f88a975e209d244b4aa466aabb86bc31, type: 3}
   - {fileID: 1051531703674050930, guid: 46cbe364be8a94f8c8b0bf7ef0e73dfa, type: 3}
+  defaultMaterial: {fileID: 2100000, guid: 5ee3de496f9d849d39f8ca95216f5318, type: 2}
   maxHeight: 0
 --- !u!114 &8484800633828218629
 MonoBehaviour:
@@ -156,7 +157,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c25afa22e13d24ccebe5a96823ff4f6b, type: 2}
+  - {fileID: 2100000, guid: 5ee3de496f9d849d39f8ca95216f5318, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -316,6 +317,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Surface
       objectReference: {fileID: 0}
+    - target: {fileID: 3278129240048062343, guid: 97844ba69ef1c47faa185d83bf8fa70e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5ee3de496f9d849d39f8ca95216f5318, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97844ba69ef1c47faa185d83bf8fa70e, type: 3}
 --- !u!1001 &3544174779982030235
@@ -409,6 +414,18 @@ PrefabInstance:
       propertyPath: corners.Array.data[5]
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3278129240048062343, guid: 97844ba69ef1c47faa185d83bf8fa70e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5ee3de496f9d849d39f8ca95216f5318, type: 2}
+    - target: {fileID: 8168759376695085859, guid: 97844ba69ef1c47faa185d83bf8fa70e, type: 3}
+      propertyPath: ground.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8168759376695085859, guid: 97844ba69ef1c47faa185d83bf8fa70e, type: 3}
+      propertyPath: ground.Array.data[1]
+      value: 
+      objectReference: {fileID: 8484800634085182463}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97844ba69ef1c47faa185d83bf8fa70e, type: 3}
 --- !u!4 &3867955490427282064 stripped
@@ -423,6 +440,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 9056738951528167671}
     m_Modifications:
+    - target: {fileID: 1011205117383285284, guid: f8781b93daaf54ee9ad85132c9ede625, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5ee3de496f9d849d39f8ca95216f5318, type: 2}
     - target: {fileID: 1515595150588361713, guid: f8781b93daaf54ee9ad85132c9ede625, type: 3}
       propertyPath: m_Name
       value: Escalator Variant
@@ -552,6 +573,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cave Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 1258296456598544848, guid: ccf8064b0b21843a9bcef320442f95d1, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5ee3de496f9d849d39f8ca95216f5318, type: 2}
     - target: {fileID: 2344540981093960011, guid: ccf8064b0b21843a9bcef320442f95d1, type: 3}
       propertyPath: m_IsActive
       value: 0

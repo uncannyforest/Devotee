@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider))]
@@ -23,7 +22,7 @@ public class Holdable : MonoBehaviour {
             if (value) {
                 this.transform.SetParent(playerHoldTransform);
             } else {
-                this.transform.SetParent(null);
+                this.transform.SetParent(Terrain.I.GetClosestLand(this.transform.position));
             }
         }
     }

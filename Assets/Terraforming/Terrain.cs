@@ -46,6 +46,19 @@ public class Terrain : MonoBehaviour {
         return CanRaiseTerrain(pos) && (ContainsPlayer(pos) == null);
     }
 
+    public Transform GetClosestLand(Vector3 worldPos) {
+        Column column = Grid[HexPos.FromWorld(worldPos)];
+        if (column == null) return null;
+        float floor = column.Surface.transform.position.y;
+        int i = 0;
+        for ( ; i < column.transform.childCount - 1; i++) {
+            if (worldPos.y >= floor) break;
+            floor -= 2 * scale;
+        }
+        Debug.Log("Closest land for pos " + HexPos.FromWorld(worldPos) + " is index " + i);
+        return column.transform.GetChild(i);
+    }
+
     public void PopulateTerrainFromData(Column.Data[] land) {
         Vector3 startLoc = Terrain.Grid[originPositions[1]].transform.position;
         foreach (Column.Data column in land) Column.Instantiate(column);

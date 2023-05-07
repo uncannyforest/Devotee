@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
 
 public class Drown : MonoBehaviour {
-    public float lifeDrainTime = 2;
     public float cycleRate = 2f;
     public Vector3 ikMax = new Vector3(.5f, .5f, 1f);
     public float scarfForce = 20;
     public bool isDrowning = false;
     public GameObject splash;
+    public float delayedDisable = .1f;
 
     public bool IsDrowning {
         set {
@@ -17,24 +17,23 @@ public class Drown : MonoBehaviour {
 
             scarf.externalAcceleration = Vector3.up * (isDrowning ? scarfForce : 0);
             if (isDrowning) {
-                control.ProhibitMove("drowning");
+                CancelInvoke();
+                character.SetDrowning(true);
                 splash.SetActive(true);
                 StartCoroutine(LifeDrain());
             } else {
-                control.AllowMove("drowning");
-                splash.SetActive(false);
-                StopAllCoroutines();
+                Invoke("DisableDrowning", delayedDisable);
             }
         }
     }
 
     private Animator animator;
-    private ThirdPersonUserControl control;
+    private ThirdPersonCharacter character;
     private Cloth scarf;
     private Life life;
     void Start() {
         animator = GetComponent<Animator>();
-        control = GetComponent<ThirdPersonUserControl>();
+        character = GetComponent<ThirdPersonCharacter>();
         scarf = GetComponentInChildren<Cloth>();
         life = FindObjectOfType<Life>();
     }
@@ -42,8 +41,14 @@ public class Drown : MonoBehaviour {
     private IEnumerator LifeDrain() {
         while (true) {
             life.Decrease();
-            yield return new WaitForSeconds(lifeDrainTime);
+            yield return null;
         }
+    }
+
+    private void DisableDrowning() {
+        character.SetDrowning(false);
+        splash.SetActive(false);
+        StopAllCoroutines();
     }
 
     void OnAnimatorIK() {

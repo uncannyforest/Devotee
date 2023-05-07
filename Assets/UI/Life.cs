@@ -7,9 +7,12 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class Life : MonoBehaviour {
     public GameObject heart;
     public int max = 6;
+    public float invincibilityFrameTime = 2;
 
     private int level;
     private ShowEverywhere showEverywhere;
+
+    private bool invincibilityFrames = false;
 
     void Start() {
         showEverywhere = GetComponent<ShowEverywhere>();
@@ -19,8 +22,10 @@ public class Life : MonoBehaviour {
     }
 
     public void Decrease() {
+        if (invincibilityFrames) return;
         level--;
         StartCoroutine(RemoveHeart());
+        StartCoroutine(InvincibilityFrames());
         showEverywhere.ActivateTemp();
         if (level == 0) FindObjectOfType<ThirdPersonCharacter>().SetDead(true);
     }
@@ -31,6 +36,12 @@ public class Life : MonoBehaviour {
         child.GetChild(0).gameObject.SetActive(false);
         yield return new WaitForSeconds(child.GetComponentInChildren<ParticleSystem>().main.startLifetime.constant);
         GameObject.Destroy(child.gameObject);
+    }
+
+    private IEnumerator InvincibilityFrames() {
+        invincibilityFrames = true;
+        yield return new WaitForSeconds(invincibilityFrameTime);
+        invincibilityFrames = false;
     }
 
     public void Increase() {

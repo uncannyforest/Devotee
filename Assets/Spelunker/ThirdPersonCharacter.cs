@@ -53,9 +53,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 		public void SetDead(bool dead) => m_Animator.SetBool("Dead", dead);
 
+		public void SetDrowning(bool drowning) => m_Animator.SetBool("Drowning", drowning);
+
 		public void Move(Vector3 move, bool jump) {
-			if (m_Animator.GetBool("Dead")) {
+			if (m_Animator.GetBool("Dead") || m_Animator.GetBool("Drowning")) {
 				m_Animator.applyRootMotion = false;
+				m_Rigidbody.AddForce(Physics.gravity * m_GravityMultiplier);
 				return;
 			}
 

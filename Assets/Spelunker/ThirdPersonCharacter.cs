@@ -52,6 +52,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		}
 
 		public void Move(Vector3 move, bool jump) {
+			if (m_Animator.GetBool("Dead")) {
+				m_Animator.applyRootMotion = false;
+				return;
+			}
+
 			Vector3 forwardPush = move;
 
 			// convert the world relative moveInput vector into a local-relative
@@ -164,7 +169,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		}
 
 
-		public void OnAnimatorMove()
+		public void Update()
 		{
 			// we implement this function to override the default root motion.
 			// this allows us to modify the positional speed before it's applied.

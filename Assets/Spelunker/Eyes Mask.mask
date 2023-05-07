@@ -60,4 +60,4 @@ AvatarMask:
   - m_Path: Character
     m_Weight: 0
   - m_Path: Eyes
-    m_Weight: 0
+    m_Weight: 1

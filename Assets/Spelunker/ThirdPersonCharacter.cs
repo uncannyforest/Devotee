@@ -51,6 +51,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			m_ActualGroundCheckDistance = m_GroundCheckDistance;
 		}
 
+		public void SetDead(bool dead) => m_Animator.SetBool("Dead", dead);
+
 		public void Move(Vector3 move, bool jump) {
 			if (m_Animator.GetBool("Dead")) {
 				m_Animator.applyRootMotion = false;

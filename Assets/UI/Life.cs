@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 [RequireComponent(typeof(ShowEverywhere))]
 public class Life : MonoBehaviour {
@@ -21,6 +22,7 @@ public class Life : MonoBehaviour {
         level--;
         StartCoroutine(RemoveHeart());
         showEverywhere.ActivateTemp();
+        if (level == 0) FindObjectOfType<ThirdPersonCharacter>().SetDead(true);
     }
 
     private IEnumerator RemoveHeart() {

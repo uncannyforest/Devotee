@@ -4,10 +4,33 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class FlexibleInputDisplay : MonoBehaviour {
+    public GameObject largeNotice;
     public GameObject interactNotice1;
 
     public void UpdateForHeldObject(GameObject heldObject) {
-        SetInteractionMessage("release");
+        SetLayerPerspective().SetInteractionMessage("release");
+    }
+
+    public FlexibleInputDisplay SetLayerPerspective() {
+        gameObject.layer = LayerMask.NameToLayer("Perspective UI Only");
+        return this;
+    }
+    public FlexibleInputDisplay SetLayerOrthographic() {
+        gameObject.layer = LayerMask.NameToLayer("Orthographic UI Only");
+        return this;
+    }
+    public FlexibleInputDisplay SetLayerBoth() {
+        gameObject.layer = LayerMask.NameToLayer("UI");
+        return this;
+    }
+
+    public void SetLargeMessage(string message) {
+        if (!string.IsNullOrEmpty(message)) {
+            largeNotice.SetActive(true);
+            largeNotice.transform.Find("Text").gameObject.GetComponent<Text>().text = message;
+        } else {
+            largeNotice.SetActive(false);
+        }
     }
 
     public void SetInteractionMessage(string interact1) {
@@ -26,6 +49,5 @@ public class FlexibleInputDisplay : MonoBehaviour {
         } else {
             interactNotice.SetActive(false);
         }
-
     }
 }

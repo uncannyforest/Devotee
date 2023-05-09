@@ -19,6 +19,7 @@ public class Terrain : MonoBehaviour {
     public MeshGenerator surfaceMesh;
     public GameObject[] randomUnderground;
     public Material defaultMaterial;
+    public Transform spawnPoint;
 
     public HexGrid<Column> grid = new HexGrid<Column>();
     public static HexGrid<Column> Grid { get => instance.grid; }
@@ -32,6 +33,8 @@ public class Terrain : MonoBehaviour {
         grid[new HexPos(0, 0)] = transform.GetChild(0).GetComponent<Column>();
         grid[new HexPos(1, 0)] = transform.GetChild(1).GetComponent<Column>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        player.position = spawnPoint.position;
+        player.rotation = spawnPoint.rotation;
     }
 
     public bool CanRaiseTerrain(HexPos pos) {

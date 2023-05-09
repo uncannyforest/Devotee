@@ -8,26 +8,34 @@ public class Life : MonoBehaviour {
     public GameObject heart;
     public int max = 6;
     public float invincibilityFrameTime = 2;
+    [TextArea(3,10)] public string deathMessage;
 
     private int level;
     private ShowEverywhere showEverywhere;
+    private ThirdPersonCharacter player;
+    private Interaction interaction;
+    private FlexibleInputDisplay input;
 
     private bool invincibilityFrames = false;
 
     void Start() {
         showEverywhere = GetComponent<ShowEverywhere>();
+        player = FindObjectOfType<ThirdPersonCharacter>();
+        interaction = FindObjectOfType<Interaction>();
+        input = FindObjectOfType<FlexibleInputDisplay>();
         level = max;
         for (int i = 0; i < max; i++)
             GameObject.Instantiate(heart, transform);
     }
 
     public void Decrease() {
-        if (invincibilityFrames) return;
+        if (invincibilityFrames || level == 0) return;
         level--;
         StartCoroutine(RemoveHeart());
         StartCoroutine(InvincibilityFrames());
         showEverywhere.ActivateTemp();
-        if (level == 0) FindObjectOfType<ThirdPersonCharacter>().SetDead(true);
+        if (level == 0) Die();
+            
     }
 
     private IEnumerator RemoveHeart() {
@@ -48,5 +56,18 @@ public class Life : MonoBehaviour {
         if (level >= max) return;
         level++;
         GameObject.Instantiate(heart, transform);
+    }
+
+    private void Die() {
+        player.SetDead(true);
+        interaction.mustRelinquish = Resurrect;
+        input.SetLayerOrthographic().SetLargeMessage(deathMessage);
+    }
+
+    private void Resurrect() {
+        player.SetDead(false);
+        player.transform.position = Terrain.I.spawnPoint.position;
+        player.transform.rotation = Terrain.I.spawnPoint.rotation;
+        input.SetLargeMessage(null);
     }
 }

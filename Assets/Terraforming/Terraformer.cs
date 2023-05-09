@@ -38,7 +38,7 @@ public class Terraformer : MonoBehaviour {
             Position += HexPos.D.Rotate(-camera.eulerAngles.y - 30);
         }
         if (Input.GetKeyDown("space")) {
-            interaction.Use();
+            interaction.Select();
             Position = Position;
         }
     }

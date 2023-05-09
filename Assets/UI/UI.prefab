@@ -382,6 +382,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heart: {fileID: 4240662108048402855, guid: 0c2956e5fbaa648b0bb3638abaa9dbbb, type: 3}
   max: 6
+  invincibilityFrameTime: 2
+  deathMessage: 'Your devotee has died.
+
+    In order to resurrect your devotee,
+    select an item to give up and press <color=white>space</color> to continue'
 --- !u!114 &9065749986905538436
 MonoBehaviour:
   m_ObjectHideFlags: 0

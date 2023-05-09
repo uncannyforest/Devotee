@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class Interaction : MonoBehaviour {
     public float scale = 48;
     public Color activeColor = Color.white;
     public Color inactiveColor = Color.white;
+
+    public Action mustRelinquish = null;
 
     private int numTools = 1;
 
@@ -32,18 +35,12 @@ public class Interaction : MonoBehaviour {
         tool.GetComponentInChildren<SpriteRenderer>().color = inactiveColor;
     }
 
-    private void SetLayerForAllChildren(Transform root, int layer) {
-        foreach (Transform child in root.GetComponentsInChildren<Transform>(includeInactive: true)) {
-            child.gameObject.layer = layer;
-        }
-    }
-
     public void AddTool(Collectible tool) {
         tool.transform.parent = transform.GetChild(numTools);
         tool.transform.localPosition = Vector3.zero;
         tool.transform.localRotation = Quaternion.identity;
         tool.transform.localScale = Vector3.one * scale;
-        SetLayerForAllChildren(tool.transform, LayerMask.NameToLayer("UI"));
+        tool.transform.SetLayerForAllChildren(LayerMask.NameToLayer("UI"));
         tool.GetComponentInChildren<Billboard>().lookCamera = uiCamera;
         tool.GetComponentInChildren<ParticleSystem>().gameObject.SetActive(false);
         SetInactiveTool(tool);
@@ -71,5 +68,20 @@ public class Interaction : MonoBehaviour {
         bool used = transform.GetChild(currentTool).GetChild(0).GetComponent<Tool>().Use();
         if (used) StartCoroutine(CollectibleSpawn.UpdateAllTriggers());
         return used;
+    }
+
+    public void Relinquish() {
+        GameObject.Destroy(transform.GetChild(currentTool).gameObject);
+        CurrentTool = 0;
+    }
+
+    public void Select() {
+        if (mustRelinquish != null) {
+            Relinquish();
+            mustRelinquish();
+            mustRelinquish = null;
+        } else {
+            Use();
+        }
     }
 }

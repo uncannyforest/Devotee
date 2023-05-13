@@ -15,10 +15,11 @@ public class ChangeMaterial : Tool {
     }
 
     override public bool Use() {
-        Column column = Terrain.Grid[selector.Position];
+        Column column = Terrain.Grid[Position];
         if (column == null) return false;
         foreach (Land land in column.GetComponentsInChildren<Land>())
             OnLand(land, material);
+        CircularIntersectionManager.I.UpdateHex(Position);
         return true;
     }
 

@@ -43,6 +43,7 @@ public class Column : MonoBehaviour {
         column.gameObject.name = position.ToString();
         Terrain.Grid[position] = column;
         column.InstantiateSurface(position, column.transform.position, surface);
+        CircularIntersectionManager.I.UpdateHex(position);
         return column;
     }
 
@@ -85,7 +86,7 @@ public class Column : MonoBehaviour {
 
     public int[] Heights { get => Surface.Corners.heightsWithBase(Y); }
     public int MaxHeight { get => Mathf.Max(Surface.GetComponent<MeshGenerator>().Corners) + Y; }
-    public Material Material { get => Surface.GetComponent<MeshRenderer>().material; }
+    public Material Material { get => Surface.GetComponent<MeshRenderer>().sharedMaterial; }
     public MeshGenerator Surface { get => transform.GetChild(0).GetComponent<MeshGenerator>(); }
     public Transform DeepestUnderground { get => transform.GetChild(transform.childCount - 1); }
     public bool HasUnderground { get => transform.childCount > 1; }
@@ -104,6 +105,9 @@ public class Column : MonoBehaviour {
             SurfaceHeight.RaiseColumn(position, diff, null);
         } else if (diff < 0) {
             GetComponent<Rigidbody>().MovePosition(transform.position + diff * Vector3Int.up);
+            CircularIntersectionManager.I.UpdateHex(position);
+        } else {
+            CircularIntersectionManager.I.UpdateHex(position);
         }
     }
     public void RigidbodyMove(int quantity) {

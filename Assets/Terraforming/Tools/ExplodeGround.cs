@@ -17,6 +17,7 @@ public class ExplodeGround : Tool {
 
         Transform surface = column.InstantiateSurface(Position, initialPosition, SurfaceHeight.RandomSurface());
         surface.SetAsFirstSibling();
+        CircularIntersectionManager.I.UpdateHex(Position);
 
         return true;
     }

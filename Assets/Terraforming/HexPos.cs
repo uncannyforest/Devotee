@@ -18,7 +18,7 @@ public struct HexPos {
         => new Vector2((pos.x + pos.y) * 1.5f, (pos.y - pos.x) * SQRT3 / 2);
     public static explicit operator Vector3(HexPos pos)
         => new Vector3((pos.x + pos.y) * 1.5f, 0, (pos.y - pos.x) * SQRT3 / 2);
-    public Vector3 World { get => ((Vector3)this) * Terrain.I.scale; }
+    public Vector3 World { get => Quaternion.Euler(0, -30, 0) *  ((Vector3)this) * Terrain.I.scale; }
     public static HexPos FromWorld(Vector3 worldCoord) {
         Vector3 coord = worldCoord / Terrain.Scale;
         float fX = (Quaternion.Euler(0, -120, 0) * coord).z / 1.5f;
@@ -84,6 +84,17 @@ public struct HexPos {
     }
 
     public int[] UnitCorners { get => new int[] {(ToUnitRotation() / 60 + 5) % 6, ToUnitRotation() / 60}; }
+
+    public TriPos[] Corners {
+        get => new TriPos[] {
+            new TriPos(this + E, false),
+            new TriPos(this, true),
+            new TriPos(this + W, false),
+            new TriPos(this + A, true),
+            new TriPos(this, false),
+            new TriPos(this + S, true)
+        };
+    }
 
     override public string ToString() => "(" + x + ", " + y + ")";
 }

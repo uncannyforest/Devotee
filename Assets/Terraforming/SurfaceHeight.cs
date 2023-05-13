@@ -38,11 +38,11 @@ public class SurfaceHeight {
         return Random.Range(0, 2) * 2 - 1;
     }
 
-    public static int GetHeight(HexPos position, int corner) {
+    public static int? GetHeight(HexPos position, int corner) {
         Column column = Terrain.Grid[position];
         if (column == null) return 0;
         int level = column.GetHeight(corner);
-        return level > 0 ? level : 0;
+        return level >= 0 ? level : (int?)null;
     }
 
     public static int GetSeafloorHeight(HexPos position, int corner) {
@@ -118,6 +118,7 @@ public class SurfaceHeight {
         ExtendColumn(Position, -quantity, groundId);
         column.RigidbodyMove(quantity);
         int yPos = Mathf.RoundToInt(column.Surface.position.y) + quantity;
+        CircularIntersectionManager.I.UpdateHex(Position);
         return yPos;
     }
 

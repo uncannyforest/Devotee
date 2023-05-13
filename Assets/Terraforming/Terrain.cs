@@ -30,8 +30,8 @@ public class Terrain : MonoBehaviour {
     private Transform player;
 
     public void Awake() {
-        grid[new HexPos(0, 0)] = transform.GetChild(0).GetComponent<Column>();
-        grid[new HexPos(1, 0)] = transform.GetChild(1).GetComponent<Column>();
+        grid[new HexPos(0, 0)] = transform.GetChild(1).GetComponent<Column>();
+        grid[new HexPos(1, 0)] = transform.GetChild(2).GetComponent<Column>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         player.position = spawnPoint.position;
         player.rotation = spawnPoint.rotation;

@@ -189,7 +189,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		}
 
 		void OnDrawGizmos() {
-			//Gizmos.DrawSphere(transform.position + (Vector3.up * (0.1f - m_ActualGroundCheckDistance)), m_GroundCheckRadius);
+			Gizmos.DrawSphere(transform.position + (Vector3.up * (0.1f - m_ActualGroundCheckDistance)), m_GroundCheckRadius);
 		}
  
 		void CheckGroundStatus()

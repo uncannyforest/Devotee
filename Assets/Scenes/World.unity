@@ -1001,6 +1001,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3815004924795218872, guid: bd4e628423df54bc899d4779fb626d99, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 12.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3815004924795218872, guid: bd4e628423df54bc899d4779fb626d99, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 12.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9161889308306975446, guid: bd4e628423df54bc899d4779fb626d99, type: 3}
+      propertyPath: defaultSize
+      value: 12.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd4e628423df54bc899d4779fb626d99, type: 3}
 --- !u!1001 &5771772930495220697
@@ -1328,6 +1340,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7747238465394339637, guid: 3d716fcf90642438397ebeaef6da3712, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8660254
+      objectReference: {fileID: 0}
+    - target: {fileID: 7747238465394339637, guid: 3d716fcf90642438397ebeaef6da3712, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7747238465394339637, guid: 3d716fcf90642438397ebeaef6da3712, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 8484800633828218630, guid: 3d716fcf90642438397ebeaef6da3712, type: 3}
       propertyPath: m_Name
       value: Terrain

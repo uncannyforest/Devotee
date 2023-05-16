@@ -12,7 +12,7 @@ public class Hall : MonoBehaviour {
         Transform outer = transform.Find("Outer");
 
         Land land = GetComponent<Land>();
-        int version = GetComponent<Land>().RandomRange(4);
+        int version = land.RandomRange(4);
         switch (version) {
             case 0: // all entrances open
                 foreach (Transform child in inner) GameObject.Destroy(child.gameObject);

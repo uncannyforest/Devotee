@@ -49,6 +49,8 @@ MonoBehaviour:
   terraformer: {fileID: 0}
   characterCam: {fileID: 4304921966371258859}
   terraformerCam: {fileID: 2791998345034029837}
+  characterLight: {fileID: 0}
+  terraformerLight: {fileID: 0}
   uiCam: {fileID: 0}
   godMode: 0
 --- !u!1001 &5771772928748309932
@@ -166,10 +168,6 @@ PrefabInstance:
       propertyPath: m_Pivot
       value: 
       objectReference: {fileID: 4304921966371036623}
-    - target: {fileID: 7757260547587279940, guid: 05330d818251943688824d690aeb9c68, type: 3}
-      propertyPath: m_HTurnSpeed
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 7757260547587279940, guid: 05330d818251943688824d690aeb9c68, type: 3}
       propertyPath: m_VTurnSpeed
       value: 0.02
